@@ -15,7 +15,7 @@ class pricing
 {
 
 
-    public function GetCost($quantity)
+    public function GetCostforFeedQuantity($quantity)
     {
         $volumeCalculator = new VolumeBasedCalculator();
         $configuration = array(
@@ -77,6 +77,43 @@ class pricing
                 'min' => 24, // if is more than 10 then price is 200
                 'max' => null,
                 'price' => 0.80,
+            ),
+        );// else is 599 (because the price from book is 599)
+
+        $book = new Book();
+        $book->setPricingConfiguration($configuration);
+        $book->setPrice(1);
+
+// if you don't pass $context to calculate method then quantity will be 1
+        $context = array('quantity' => $quantity);
+
+        $cost = $volumeCalculator->calculate($book, $book->getPricingConfiguration(), $context); // returns 300
+
+        return $cost;
+    }
+    public function DiscountforDomain($quantity)
+    {
+        $volumeCalculator = new VolumeBasedCalculator();
+        $configuration = array(
+            array(            // if quantity is between 2-9 the price is for each 300
+                'min' => 2,
+                'max' => 2,
+                'price' => 0.90,
+            ),
+            array(
+                'min' => 3, // if is more than 10 then price is 200
+                'max' => 9,
+                'price' => 0.90,
+            ),
+            array(
+                'min' => 10, // if is more than 10 then price is 200
+                'max' => 19,
+                'price' => 0.70,
+            ),
+            array(
+                'min' => 20, // if is more than 10 then price is 200
+                'max' => null,
+                'price' => 0.50,
             ),
         );// else is 599 (because the price from book is 599)
 

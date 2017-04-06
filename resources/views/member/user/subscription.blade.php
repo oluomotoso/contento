@@ -88,6 +88,13 @@
                                     </div>
 
                                 </div>
+                                <div class="form-group">
+                                    <div class="form-group">
+                                        <label for="domain">Number of Allowed Domain</label>
+                                        <input id="domain" class="form-control" type="number" name="number_of_domain">
+                                    </div>
+
+                                </div>
                             </div>
                         </div>
                         <input name="_token" type="hidden" value="{{csrf_token()}}">

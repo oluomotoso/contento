@@ -1,0 +1,126 @@
+
+/* Invoice */
+.invoice {
+    padding: 0 15px 15px;
+}
+
+/* Invoice Address Tag */
+.invoice address {
+    color: #7F8597;
+    line-height: 1.5em;
+}
+
+/* Invoice header */
+.invoice header {
+    border-bottom: 1px solid #DADADA;
+    margin-bottom: 15px;
+}
+.invoice header .h2,
+.invoice header .h4 {
+    letter-spacing: 0;
+}
+
+/* Invoice Billing Information */
+.invoice .bill-to,
+.invoice .bill-data {
+    padding: 15px 0;
+}
+.invoice .bill-data .value {
+    display: inline-block;
+    margin-left: 10px;
+    width: 90px;
+}
+
+/* Invoice table */
+.invoice table.table {
+    table-layout: fixed;
+}
+.invoice table.table > thead:first-child > tr > th {
+    background-color: #F8F8F8;
+    border-bottom: 1px solid #DADADA;
+    border-top: 1px solid #DADADA;
+}
+.invoice table.table > tbody tr > td {
+    border-color: #DADADA;
+}
+
+/* Invoice table items */
+.invoice .invoice-items > tbody tr:last-child > td {
+    border-bottom: 1px solid #DADADA;
+}
+.invoice .invoice-items #cell-id {
+    width: 10%;
+}
+.invoice .invoice-items #cell-item {
+    width: 20%;
+}
+.invoice .invoice-items #cell-desc {
+    width: 20%;
+}
+.invoice .invoice-items #cell-price {
+    width: 10%;
+}
+.invoice .invoice-items #cell-qty {
+    width: 10%;
+}
+.invoice .invoice-items #cell-total {
+    width: 10%;
+}
+
+/* Invoice summary */
+.invoice-summary .col-sm-4 {
+    padding-left: 0;
+}
+
+/* Invoice Responsiveness */
+@media only screen and (max-width: 991px) {
+    .invoice .table-responsive > table.table {
+        table-layout: auto;
+    }
+
+    .invoice-summary .col-sm-4 {
+        padding-left: 15px;
+    }
+}
+/* Invoice Print */
+@media print {
+    .invoice .table-responsive {
+        border: none !important;
+        overflow: visible !important;
+        width: auto !important;
+    }
+    .invoice table.table.invoice-items {
+        table-layout: auto;
+    }
+    .invoice header .col-sm-6:first-child,
+    .invoice header .col-sm-6:last-child,
+    .invoice .bill-info .col-md-6 {
+        float: left !important;
+    }
+    .invoice header .col-sm-6:first-child {
+        width: 25% !important;
+    }
+    .invoice header .col-sm-6:last-child {
+        width: 75% !important;
+    }
+    .invoice .bill-info .col-md-6 {
+        width: 50% !important;
+    }
+    .invoice .invoice-summary .col-sm-4 {
+        float: right;
+        padding: 0;
+        width: 40%;
+    }
+}
+/* dark */
+html.dark .invoice header {
+    border-bottom-color: #282d36;
+}
+html.dark .invoice table.table > thead:first-child > tr > th {
+    background-color: #282d36;
+    border-bottom-color: #282d36;
+    border-top-color: #282d36;
+}
+html.dark .invoice table.table > tbody tr > td {
+    border-color: #282d36;
+}

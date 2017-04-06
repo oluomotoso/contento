@@ -87,6 +87,7 @@ class UserController extends Controller
             return redirect('/user/user-settings')->withErrors('You must update your profile before you can continue');
         }
         $profile = User_profile::where('user_id', $user->id)->first();
+        $currency = $profile->currency;
         $feeds = $request->id;
         $id = '';
         $cost = '';
@@ -94,17 +95,20 @@ class UserController extends Controller
             $datasource_feed = datasource_feed::find($feed);
             $cost += $datasource_feed->cost;
         }
+        $cost = $cost * $currency->rate_to_usd;
         $plan = Plan::find($request->duration);
-        $currency = currency::find($profile->country);
-        $actual_cost = $cost * $plan->month * $currency->rate_to_usd;
-        $sources = datasource_feed::find($feeds);
+
         $count = count($feeds);
         $pricing = new pricing();
-        $profile = User_profile::where('user_id', $user->id)->first();
-        $currency = currency::find($profile->currency_id);
-        $discounted_cost = $pricing->GetCost($count) * $cost;
-        $discount = (($monthly_cost - $cost) / 100) * $monthly_cost;
-        return view('member.user.add-subscription', ['feed_cost' => $cost, 'sources' => $sources, 'feeds' => $id, 'plans' => $plans, 'currency' => $currency->id, 'discount' => $discount]);
+
+        $discounted_cost_for_feed = $pricing->GetCostforFeedQuantity($count) * $cost;
+        $discounted_cost_for_duration = $pricing->GetPriceperDuration($plan->month) * $discounted_cost_for_feed * $plan->month;
+        $final_cost = $pricing->DiscountforDomain($request->number_of_domain) * $discounted_cost_for_duration * $request->number_of_domain;
+        $actual_cost = $cost * $plan->month * $request->number_of_domain;
+        $discount = (($actual_cost - $final_cost) / $actual_cost) * 100;
+        $sources = datasource_feed::find($feeds);
+        $currency_code = country($currency->country)->getCurrency()['iso_4217_code'];
+        return view('member.user.finalize_order', ['actual_cost' => $actual_cost, 'final_cost' => $final_cost, 'sources' => $sources, 'feeds' => $id, 'currency' => $currency->id, 'total_discount' => $discount, 'subscription_name' => $request->name, 'domain_number' => $request->number_of_domain, 'currency_code' => $currency_code, 'plan' => $plan]);
 
 
     }
