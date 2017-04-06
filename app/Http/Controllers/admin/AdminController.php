@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\admin;
 
+use App\currency;
 use App\datasource;
 use App\datasource_feed;
 use App\Jobs\FindFeeds;
+use App\Subscription;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -68,6 +70,25 @@ class AdminController extends Controller
         $datas = datasource_feed::orderBy('name', 'asc')->get();
         return view('member.admin.managefeeds', ['datas' => $datas]);
     }
+
+    public function GetSiteSettings()
+    {
+        $currencies = currency::all();
+        return view('member.admin.site_settings', ['currencies' => $currencies]);
+    }
+
+    public function PostSiteSettings(Request $request)
+    {
+        if (isset($_POST['currency'])) {
+            if (isset($request->remove) == true) {
+                currency::where('country', $request->country)->delete();
+            } else {
+                currency::updateOrCreate(['country' => $request->country], ['rate_to_usd' => $request->value]);
+            }
+        }
+        return redirect($request->path())->with('message', 'currencies updated successfully');
+    }
+
 
 
 }

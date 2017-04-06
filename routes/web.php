@@ -29,6 +29,9 @@ Route::group(['middleware' => 'admin', 'prefix' => 'admin'], function () {
         Route::post('/manage-sources', 'AdminController@AddDatasource');
         Route::get('/manage-feeds', 'AdminController@ManageFeedsView');
         Route::post('/manage-feeds', 'AdminController@ManageFeeds');
+        Route::get('/site-settings', 'AdminController@GetSiteSettings');
+        Route::post('/site-settings', 'AdminController@PostSiteSettings');
+
 
     });
 });
@@ -37,10 +40,11 @@ Route::group(['middleware' => 'auth', 'prefix' => 'user'], function () {
         Route::get('/', 'UserController@index');
         Route::get('/dashboard', 'UserController@index');
         Route::get('/create-subscription', 'UserController@ViewCreateSubscription');
-        Route::post('/create-subscription', 'UserController@CreateSubscription');
+        Route::post('/create-subscription', 'UserController@PostSubscription');
         Route::get('/manage-subscriptions', 'UserController@ViewManageSubscriptions');
         Route::post('/manage-subscriptions', 'UserController@ManageSubscriptions');
         Route::get('/pricing', 'UserController@Pricing');
-
+        Route::get('/user-settings', 'UserController@GetUserSettings');
+        Route::post('/user-settings', 'UserController@PostUserSettings');
     });
 });

@@ -172,7 +172,7 @@
                             </li>
                         @endif
                         <li role="presentation">
-                            <a href="{{url('/user/settings')}}" role="menuitem"><i class="icon wb-settings"
+                            <a href="{{url('/user/user-settings')}}" role="menuitem"><i class="icon wb-settings"
                                                                                    aria-hidden="true"></i> Settings</a>
                         </li>
 
@@ -358,18 +358,6 @@
         });
         e.preventDefault();
     });
-</script>
-<script>
-    $(document).ready(function () {
-        var table = $('#dataTables-example').DataTable({
-            lengthChange: true,
-            "order": [[4, 'desc']],
-        });
-
-
-    });
-
-
 </script>
 
 

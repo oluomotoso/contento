@@ -13,7 +13,15 @@
                             </a>
                         </li>
                         <li class="dropdown site-menu-item has-section has-sub">
-                            <a class="dropdown-toggle" href="{{url('/user/subscriptions')}}"
+                            <a class="dropdown-toggle" href="{{url('/user/create-subscription')}}"
+                               data-dropdown-toggle="false">
+                                <i class="site-menu-icon wb-more-vertical" aria-hidden="true"></i>
+                                <span class="site-menu-title">Create Subscriptions</span>
+
+                            </a>
+                        </li>
+                        <li class="dropdown site-menu-item has-section has-sub">
+                            <a class="dropdown-toggle" href="{{url('/user/manage-subscriptions')}}"
                                data-dropdown-toggle="false">
                                 <i class="site-menu-icon wb-shopping-cart" aria-hidden="true"></i>
                                 <span class="site-menu-title">Manage Subscriptions</span>
@@ -25,7 +33,6 @@
                                data-dropdown-toggle="false">
                                 <i class="site-menu-icon wb-payment" aria-hidden="true"></i>
                                 <span class="site-menu-title">Plans & Pricing</span>
-
                             </a>
                         </li>
                     </ul>

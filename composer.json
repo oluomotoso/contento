@@ -10,7 +10,9 @@
         "fguillot/picofeed": "^0.1.31",
         "laravel/framework": "5.4.*",
         "laravel/socialite": "^3.0",
-        "laravel/tinker": "~1.0"
+        "laravel/tinker": "~1.0",
+        "rinvex/country": "^2.0",
+        "sylius/pricing": "^0.19.0"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
