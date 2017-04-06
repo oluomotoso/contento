@@ -38,7 +38,7 @@
                         </div>
                         <div class="panel-body">
                             <div class="row">
-                                <div class="col-md-4">
+                                <div class="col-md-6">
                                     <h3>Update Currencies</h3>
                                     <form role="form" action="{{ url('/admin/site-settings') }}" method="post">
                                         <div class="form-group">
@@ -57,13 +57,53 @@
                                         </div>
                                         {{csrf_field()}}
                                         <label><input type="checkbox" name="remove"> Remove Currency</label>
-                                        <button type="submit" class="btn btn-default center-block" name="currency">Submit Button
+                                        <button type="submit" class="btn btn-default center-block" name="currency">
+                                            Submit Button
                                         </button>
                                     </form>
+                                    @foreach($currencies as $currency)
+                                        <li>{{country($currency->country)->getCurrency()['iso_4217_name'].':'.$currency->rate_to_usd}}</li>
+                                    @endforeach
                                 </div>
-                                @foreach($currencies as $currency)
-                                    <li>{{country($currency->country)->getCurrency()['iso_4217_name'].':'.$currency->rate_to_usd}}</li>
-                                @endforeach
+
+                                <div class="col-md-6">
+                                    <h3>Update Plans</h3>
+                                    <form role="form" action="{{ url('/admin/site-settings') }}" method="post">
+                                        <div class="form-group">
+                                            <label>Name</label>
+                                            <input class="form-control" placeholder="name"
+                                                   name="name"
+                                                   value="{{old('name')}}">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Days</label>
+                                            <input class="form-control" placeholder="Days"
+                                                   name="days"
+                                                   value="{{old('days')}}">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Months</label>
+                                            <input class="form-control" placeholder="Month"
+                                                   name="month"
+                                                   value="{{old('month')}}">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Discount</label>
+                                            <input class="form-control" placeholder="Discount"
+                                                   name="discount"
+                                                   value="{{old('discount')}}">
+                                        </div>
+                                        {{csrf_field()}}
+                                        <label><input type="checkbox" name="remove"> Remove Plan</label>
+                                        <button type="submit" class="btn btn-default center-block" name="plans">Submit
+                                            Button
+                                        </button>
+                                    </form>
+                                    @foreach($plans as $plan)
+                                        <li>{{$plan->name}}</li>
+                                    @endforeach
+                                </div>
+
                             </div>
                         </div>
                         <!-- End Example Panel Fullscreen -->

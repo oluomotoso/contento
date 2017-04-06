@@ -82,7 +82,7 @@
                                         <label for="duration">Duration</label>
                                         <select class="form-control" id="duration" name="duration">
                                             @foreach($plans as $plan)
-                                                <option value="{{$plan->id}}">{{$plan->name}}</option>
+                                                <option value="{{$plan->id}}">{{$plan->name.' ('. $plan->discount .'% off )'}}</option>
                                             @endforeach
                                         </select>
                                     </div>

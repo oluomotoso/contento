@@ -6,6 +6,7 @@ use App\currency;
 use App\datasource;
 use App\datasource_feed;
 use App\Jobs\FindFeeds;
+use App\Plan;
 use App\Subscription;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -74,7 +75,8 @@ class AdminController extends Controller
     public function GetSiteSettings()
     {
         $currencies = currency::all();
-        return view('member.admin.site_settings', ['currencies' => $currencies]);
+        $plans = Plan::all();
+        return view('member.admin.site_settings', ['currencies' => $currencies, 'plans' => $plans]);
     }
 
     public function PostSiteSettings(Request $request)
@@ -85,10 +87,16 @@ class AdminController extends Controller
             } else {
                 currency::updateOrCreate(['country' => $request->country], ['rate_to_usd' => $request->value]);
             }
+        } elseif (isset($_POST['plans'])) {
+            if (isset($request->remove) == true) {
+                Plan::where('name', $request->name)->delete();
+            } else {
+                Plan::updateOrCreate(['name' => $request->name], ['days' => $request->days, 'discount' => $request->discount, 'month' => $request->month]);
+            }
         }
-        return redirect($request->path())->with('message', 'currencies updated successfully');
-    }
 
+        return redirect($request->path())->with('message', 'settings updated successfully');
+    }
 
 
 }

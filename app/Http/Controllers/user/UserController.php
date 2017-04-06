@@ -78,9 +78,15 @@ class UserController extends Controller
 
     public function PostSubscription(Request $request)
     {
+        $user = Auth::user();
         if (count($request->id) == 0) {
             return redirect($request->path())->withErrors('invalid parameters');
         }
+        $profile_count = User_profile::where('user_id', $user->id)->count();
+        if ($profile_count == 0) {
+            return redirect('/user/user-settings')->withErrors('You must update your profile before you can continue');
+        }
+        $profile = User_profile::where('user_id', $user->id)->first();
         $feeds = $request->id;
         $id = '';
         $cost = '';
@@ -88,17 +94,17 @@ class UserController extends Controller
             $datasource_feed = datasource_feed::find($feed);
             $cost += $datasource_feed->cost;
         }
-        $plans = Plan::all();
-        $user = Auth::user();
+        $plan = Plan::find($request->duration);
+        $currency = currency::find($profile->country);
+        $actual_cost = $cost * $plan->month * $currency->rate_to_usd;
         $sources = datasource_feed::find($feeds);
         $count = count($feeds);
         $pricing = new pricing();
         $profile = User_profile::where('user_id', $user->id)->first();
         $currency = currency::find($profile->currency_id);
-        $monthly_cost = $cost;
-        $cost = $pricing->GetCost($count) * $monthly_cost;
+        $discounted_cost = $pricing->GetCost($count) * $cost;
         $discount = (($monthly_cost - $cost) / 100) * $monthly_cost;
-        return view('member.user.add-subscription', ['cost' => $cost, 'sources' => $sources, 'feeds' => $id, 'plans' => $plans, 'currency' => $currency->id, 'discount' => $discount]);
+        return view('member.user.add-subscription', ['feed_cost' => $cost, 'sources' => $sources, 'feeds' => $id, 'plans' => $plans, 'currency' => $currency->id, 'discount' => $discount]);
 
 
     }
