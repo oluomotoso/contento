@@ -19,7 +19,9 @@ class Blogger
 
     public function __construct()
     {
-        session_start();
+        if (session_status() == PHP_SESSION_NONE) {
+            session_start();
+        }
         $client_id = '465529800621-4vstv6illt2r65c30f0qa71fn53m73ha.apps.googleusercontent.com';
         $client_secret = 'Rrp2BuDcuZCEIhu8n_ehiHtF';
         $redirect_uri = 'http://localhost/contento/public/user/link-to-google';

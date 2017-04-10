@@ -7,6 +7,7 @@ use App\feed;
 use App\Jobs\UpdateBlogListForUser;
 use App\Subscription_domain;
 use App\User_domain;
+use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -32,20 +33,11 @@ class BloggerController extends Controller
         $this->client->addScope('openid');
         $this->client->setAccessType('offline');
         $this->client->addScope(\Google_Service_Blogger::BLOGGER);
+        $this->client->addScope('https://picasaweb.google.com/data');
+        //$this->client->addScope(Google_Photo)
 
     }
 
-    function getAuthSubUrl()
-    {
-        // the $next variable should represent the URL of the PHP script
-        // an example implementation for getCurrentUrl is in the sample code
-        $next = 'http://localhost/contento/public/user/auth-google-data';
-        $scope = 'https://picasaweb.google.com/data';
-        $secure = false;
-        $session = true;
-        return \Zend_Gdata_AuthSub::getAuthSubTokenUri($next, $scope, $secure,
-            $session);
-    }
 
     public function RedirectToGoogle()
     {
@@ -89,9 +81,9 @@ class BloggerController extends Controller
             //$job = (new UpdateBlogListForUser($user));
             //dispatch($job);
             $this->GetAllBlogsInAccount($apiData, $user, $authorized_email[0]->value);
-            $dataauth = $this->getAuthSubUrl();
-            return redirect()->away($dataauth);
-            //return redirect('user/manage-subscriptions')->with('message', 'Your Blogs have been successfully updated');
+            //$dataauth = $this->getAuthSubUrl();
+            //return redirect()->away($dataauth);
+            return redirect('user/manage-subscriptions')->with('message', 'Your Blogs have been successfully updated');
             // TODO: Use service object to request People data
         } else {
             $redirect_uri = 'user/google/import-contacts/?oauth';
@@ -99,18 +91,7 @@ class BloggerController extends Controller
             return redirect($redirect_uri);
         }
     }
-    function getAuthSubHttpClient()
-    {
-        if (!isset($_SESSION['sessionToken']) && !isset($_GET['token']) ){
-            echo '<a href="' . getAuthSubUrl() . '">Login!</a>';
-            exit;
-        } else if (!isset($_SESSION['sessionToken']) && isset($_GET['token'])) {
-            $_SESSION['sessionToken'] =
-                \Zend_Gdata_AuthSub::getAuthSubSessionToken($_GET['token']);
-        }
-        $client = \Zend_Gdata_AuthSub::getHttpClient($_SESSION['sessionToken']);
-        return $client;
-    }
+
     public function GetAllBlogsInAccount($item, $user, $email)
     {
         $this->client->setAccessToken($item->token);
@@ -132,21 +113,50 @@ class BloggerController extends Controller
 
     }
 
+    public function UploadPhotoToPicasa()
+    {
+
+
+    }
+
+    public function GetMultipleImageUrl($content)
+    {
+        preg_match_all('/src="(.*?)"/', $content, $matches);
+        return ($matches[1]);
+
+    }
+
     public function PostSubscriptionDomain(Request $request)
     {
         $user = Auth::user();
         $sub_domain = Subscription_domain::find($request->domain);
         $data = $sub_domain->user_domain->api_data;
-        $this->client->setAccessToken($data->token);
+        $token = $data->token;
+        $this->client->setAccessToken($token);
         if ($this->client->isAccessTokenExpired()) {
             $this->client->refreshToken($data->refresh_token);
-            $newtoken = $this->client->getAccessToken();
-            $this->client->setAccessToken($newtoken);
+            $token = $this->client->getAccessToken();
+            $this->client->setAccessToken($token);
             Api_data::updateOrCreate(['user_id' => $user->id, 'email' => $data->email], [
-                'token' => json_encode($newtoken)
+                'token' => json_encode($token)
             ]);
         }
         $feed = feed::find($request->feed);
+        $client = new Client();
+        $host = 'http://picasaweb.google.com/data/feed/api/user/default/albumid/default';
+        $image = 'http://loftysms.com/images/logo.png';
+        $mime = \GuzzleHttp\Psr7\mimetype_from_filename($image);
+        $request = $client->request('post', $host, [
+            'multipart' => [
+                ['Content-Type'=>$mime,'name' => $image, 'contents' => fopen($image, 'r')]
+            ],
+        ]);
+        $request->withHeader('authorization', $token);
+        $response = $client->send($request);
+        $response = json_decode($response->getBody(), true);
+
+        var_dump($response);
+        exit();
 
 
         $post = new \Google_Service_Blogger_Post();

@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "105eed2ef1e29a1f9eba74313b7a1d2c",
-    "content-hash": "45a592e1b2c9b640a32cb38903fada66",
+    "hash": "8d8ee6e7ab5048522ead7aceca3f9efe",
+    "content-hash": "d0295f52a4651b44613105d20b540ee3",
     "packages": [
         {
             "name": "dnoegel/php-xdg-base-dir",
@@ -3183,6 +3183,45 @@
             "time": "2016-09-01 10:05:43"
         },
         {
+            "name": "webino/zf1-gdata",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/webino/ZF1Gdata.git",
+                "reference": "871593455f85cf0da2d337739ca70cf37679f4d9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/webino/ZF1Gdata/zipball/871593455f85cf0da2d337739ca70cf37679f4d9",
+                "reference": "871593455f85cf0da2d337739ca70cf37679f4d9",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Zend": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "include-path": [
+                "src/"
+            ],
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "description": "Gdata from Zend Framework 1.12.1",
+            "homepage": "http://framework.zend.com/",
+            "keywords": [
+                "ZF1",
+                "framework",
+                "gdata"
+            ],
+            "time": "2013-02-02 23:42:46"
+        },
+        {
             "name": "webmozart/assert",
             "version": "1.2.0",
             "source": {
@@ -3300,47 +3339,6 @@
                 "yabacon"
             ],
             "time": "2017-03-29 15:59:24"
-        },
-        {
-            "name": "zend/gdata",
-            "version": "1.12.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/alchemy-fr/gdata.git",
-                "reference": "4ae96d26cec159d74ced57c89ebdcde754ece35d"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/alchemy-fr/gdata/zipball/4ae96d26cec159d74ced57c89ebdcde754ece35d",
-                "reference": "4ae96d26cec159d74ced57c89ebdcde754ece35d",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">5.2.4"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "Zend_": "library"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "New BSD"
-            ],
-            "authors": [
-                {
-                    "name": "Zend Contributors",
-                    "homepage": "http://framework.zend.com/community/contributors"
-                }
-            ],
-            "description": "The Google Data APIs are a set of web services for read/write access to applications hosted by Google",
-            "homepage": "http://framework.zend.com/download/webservices",
-            "keywords": [
-                "gdata",
-                "zend"
-            ],
-            "time": "2013-01-30 15:31:21"
         },
         {
             "name": "zendframework/zend-stdlib",

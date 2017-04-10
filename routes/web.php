@@ -56,7 +56,7 @@ Route::group(['middleware' => 'auth', 'prefix' => 'user'], function () {
         Route::post('/pay-online', 'UserController@BuyOnline');
         Route::post('/manage-domains', 'UserController@ManageDomains');
         Route::get('/link-to-google', 'BloggerController@RedirectToGoogle');
-        Route::get('/auth-google-data', 'BloggerController@getAuthSubHttpClient');
+        Route::get('/auth-google-data', 'BloggerController@UploadPhotoToPicasa');
         Route::get('/manage-domain/{id}/d/{d}', 'UserController@SubscriptionDomain');
         Route::post('/update-blogger-domain', 'BloggerController@PostSubscriptionDomain');
 
