@@ -11,12 +11,12 @@ class feed extends Model
 
     public function datasources_feed()
     {
-        return $this->belongsTo('femtosh\theaggregator\models\datasources_feed');
+        return $this->belongsTo('App\datasource_feed','datasource_feed_id');
     }
 
     public function category()
     {
-        return $this->belongsTo('femtosh\theaggregator\models\category');
+        return $this->hasMany('App\feed_category');
     }
 
 }

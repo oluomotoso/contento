@@ -1,5 +1,6 @@
 @extends('member.datatables')
 
+
 @section('topbar')
     <div class="site-menubar site-menubar-light">
         <div class="site-menubar-body">
@@ -19,10 +20,19 @@
                             </a>
                         </li>
                         <li class="dropdown site-menu-item has-section has-sub">
-                            <a class="dropdown-toggle" href="{{url('/admin/subscriptions')}}"
+                            <a class="dropdown-toggle" href="{{url('/admin/pending-subscriptions')}}"
                                data-dropdown-toggle="false">
                                 <i class="site-menu-icon wb-shopping-cart" aria-hidden="true"></i>
-                                <span class="site-menu-title">Subscriptions</span>
+                                <span class="site-menu-title">Pending Subscriptions</span>
+
+                            </a>
+
+                        </li>
+                        <li class="dropdown site-menu-item has-section has-sub">
+                            <a class="dropdown-toggle" href="{{url('/admin/live-subscriptions')}}"
+                               data-dropdown-toggle="false">
+                                <i class="site-menu-icon wb-shopping-cart" aria-hidden="true"></i>
+                                <span class="site-menu-title">Live Subscriptions</span>
 
                             </a>
 

@@ -37,30 +37,34 @@
                         </div>
                         <div class="panel-body">
                             <div class="row">
-                                <form role="form" action="{{ url('/user/user-settings') }}" method="post">
+                                <form role="form" action="{{ url('/user/finalize-subscription') }}" method="post">
 
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label>Subscription Name</label>
                                             <input class="form-control"
-                                                   value="{{$subscription_name}}" readonly>
+                                                   value="{{$subscription_name}}" readonly name="subscription_name">
                                         </div>
 
                                         <div class="form-group">
                                             <label>Subscribed Links</label>
-                                            <textarea
-                                                    readonly class="form-control" rows="5"
-                                                    cols="2">@foreach($sources as $source){{$source->datasource->url.','}}@endforeach</textarea>
+                                            <textarea readonly class="form-control" rows="5"
+                                                      cols="2">@foreach($sources as $source){{$source->datasource->url.','}}@endforeach</textarea>
+                                            @foreach($feeds as $feed)
+                                                <input name="feeds[]" type="hidden" value="{{$feed}}">
+                                            @endforeach
+                                            <input name="currency" type="hidden" value="{{$currency}}">
                                         </div>
                                         <div class="form-group">
                                             <label>Number of Allowed Domains</label>
                                             <input class="form-control"
-                                                   value="{{$domain_number}}" readonly>
+                                                   value="{{$domain_number}}" readonly name="allowed_domains">
                                         </div>
                                         <div class="form-group">
-                                            <label>Plan Name</label>
-                                            <input class="form-control"
-                                                   value="{{$plan->name}}" readonly>
+                                            <label>Plan</label>
+                                            <select name="plan" class="form-control" readonly>
+                                                <option value="{{$plan->id}}">{{$plan->name}}</option>
+                                            </select>
                                         </div>
                                         {!! csrf_field() !!}
 
@@ -68,19 +72,27 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label>Actual Cost</label>
-                                            <input class="form-control"
-                                                   value="{{$actual_cost. ' '.$currency_code}}" readonly>
+                                            <select name="actual_cost" class="form-control" readonly>
+                                                <option class="form-control"
+                                                        value="{{$actual_cost}}"
+                                                        readonly>{{$actual_cost. ' '.$currency_code}}</option>
+                                            </select>
                                         </div>
-
                                         <div class="form-group">
                                             <label>Discount</label>
-                                            <input class="form-control"
-                                                   value="{{$total_discount.' %'}}" readonly>
+                                            <select name="discount" class="form-control" readonly>
+                                                <option class="form-control"
+                                                        value="{{$total_discount}}"
+                                                        readonly>{{$total_discount.' %'}}</option>
+                                            </select>
                                         </div>
                                         <div class="form-group">
                                             <label>Final Cost</label>
-                                            <input class="form-control"
-                                                   value="{{$final_cost. ' '.$currency_code}}" readonly>
+                                            <select name="final_cost" class="form-control" readonly>
+                                                <option class="form-control"
+                                                        value="{{$final_cost}}"
+                                                        readonly>{{$final_cost. ' '.$currency_code}}</option>
+                                            </select>
                                         </div>
                                     </div>
                                     <button type="submit" class="btn btn-success center-block">Create Subscription

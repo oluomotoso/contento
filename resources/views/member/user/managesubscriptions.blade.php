@@ -42,6 +42,7 @@
                     <table class="table table-hover dataTable table-striped table-responsive" id="dataTables-message">
                         <thead>
                         <tr>
+                            <th>Name</th>
                             <th>DOMAINS</th>
                             <th>INVOICE</th>
                             <th>STATUS</th>
@@ -51,29 +52,86 @@
                         <tbody>
                         @foreach($subscriptions as $subscription)
                             <tr>
-                                <td>
-                                    <form class="form" method="post" action="{{url('user/manage_subscriptions')}}">
-                                        {{csrf_field()}}
-                                        <input name="subscription" value="{{$subscription->id}}" type="hidden">
-                                        <button type="submit" id="button" class="btn btn-default"
-                                                name="manage_subscription">Manage Domain
-                                        </button>
-                                    </form>
-                                </td>
-                                <td>
-                                    <form class="form" method="post" action="{{url('user/invoice')}}">
-                                        {{csrf_field()}}
-                                        <input name="subscription" value="{{$subscription->id}}" type="hidden">
-                                        <button type="submit" id="button" class="btn btn-primary pull-right"
-                                                name="select">INVOICE
-                                        </button>
-                                    </form>
-                                </td>
-                                <td>@if($subscription->status == 1)<span
-                                            class="btn btn-success">Approved</span>@elseif($subscription->status == 0)
-                                        <span class="btn btn-danger">Pending</span>@endif
-                                </td>
-                                <td>{{date_format($subscription->updated_at,'d M, Y')}}</td>
+                                <td>{{$subscription->name}}</td>
+                                @if($subscription->status == 1)
+                                    <td>
+                                        @if(count($subscription->domain)==0)
+                                            <p>No domain added yet</p>
+                                            <form class="form" method="post" action="{{url('user/manage-domains')}}">
+                                                {{csrf_field()}}
+                                                <input name="subscription" value="{{$subscription->id}}" type="hidden">
+                                                <button type="submit" id="button" class="btn btn-default">Add Domain
+                                                </button>
+                                            </form>
+                                        @elseif(count($subscription->domain)== count($subscription->number_of_domains))
+                                            <p>Maximum ({{$subscription->number_of_domains}}) domains added</p>
+                                            <!--form class="form" method="post" action="{{url('user/manage-domains')}}">
+                                                {{csrf_field()}}
+                                                <label>
+                                                    <select name="domain" class="form-control">
+                                                        @foreach($subscription->domain as $domain)
+                                                            <option value="{{$domain->id}}">{{$domain->user_domain->url}}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </label>
+
+                                                <input name="subscription" value="{{$subscription->id}}" type="hidden">
+                                                <button type="submit" id="button" class="btn btn-default"
+                                                        name="manage_domain">Manage Domain
+                                                </button>
+                                            </form-->
+                                            @foreach($subscription->domain as $domain)
+                                                <p><a href="{{url('user/manage-domain/'.$subscription->id.'/d/'.$domain->id)}}">{{$domain->user_domain->url}}</a></p>
+                                            @endforeach
+                                        @elseif(count($subscription->domain)< count($subscription->number_of_domains))
+                                            <p>({{$subscription->number_of_domains}}) domains added</p>
+                                            <form class="form" method="post" action="{{url('user/manage-domains')}}">
+                                                {{csrf_field()}}
+                                                <label>
+                                                    <select name="domain" class="form-control">
+                                                        @foreach($subscription->domain as $domain)
+                                                            <option value="{{$domain->id}}">{{$domain->url}}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </label>
+                                                <input name="subscription" value="{{$subscription->id}}" type="hidden">
+                                                <button type="submit" id="button" class="btn btn-default"
+                                                        name="manage_subscription">Manage Domain
+                                                </button>
+                                            </form>
+                                            <form class="form" method="post" action="{{url('user/manage-domains')}}">
+                                                {{csrf_field()}}
+                                                <input name="subscription" value="{{$subscription->id}}" type="hidden">
+                                                <button type="submit" id="button" class="btn btn-default">Add Domain
+                                                </button>
+                                            </form>
+                                        @endif
+
+                                    </td>
+
+                                    <td>
+                                        <span>PAID</span>
+                                    </td>
+
+                                    <td><span class="btn btn-success">Approved</span>
+                                    </td>
+                                    <td>{{date_format($subscription->ends_at,'d M, Y')}}</td>
+                                @else
+                                    <td>Pay to add domain</td>
+                                    <td>
+                                        <form class="form" method="post" action="{{url('user/invoice')}}">
+                                            {{csrf_field()}}
+                                            <input name="subscription" value="{{$subscription->id}}" type="hidden">
+                                            <button type="submit" id="button" class="btn btn-primary"
+                                                    name="select">Make Payment
+                                            </button>
+                                        </form>
+                                    </td>
+                                    <td><span class="btn btn-danger">Pending</span>
+                                    </td>
+                                    <td>N/A</td>
+
+                                @endif
                             </tr>
                         @endforeach
                         </tbody>

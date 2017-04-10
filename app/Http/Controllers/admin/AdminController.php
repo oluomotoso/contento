@@ -8,9 +8,11 @@ use App\datasource_feed;
 use App\Jobs\FindFeeds;
 use App\Plan;
 use App\Subscription;
+use App\Transaction;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class AdminController extends Controller
 {
@@ -98,5 +100,43 @@ class AdminController extends Controller
         return redirect($request->path())->with('message', 'settings updated successfully');
     }
 
+    public function PendingSubscriptions()
+    {
+        $subscriptions = Subscription::where('status', false)->get();
+        return view('member.admin.pendingsubscriptions', ['subscriptions' => $subscriptions]);
+    }
 
+    public function PostPendingSubscriptions(Request $request)
+    {
+        $subscription = Subscription::with(['transaction' => function ($query) {
+            $query->where('status', false);
+        }])->find($request->subscription);
+        $plan = $subscription->plan;
+        $approved = date('Y-m-d H:i:s');
+        $time = strtotime($approved);
+        $expiry = $time + ($plan->days * 24 * 60 * 60);
+        $expiry_date = date('Y-m-d H:i:s', $expiry);
+        DB::beginTransaction();
+        $key = uniqid('', true);
+        Subscription::where('id', $request->subscription)->update([
+            'status' => true,
+            'ends_at' => $expiry_date,
+            'subscription_key' => $key
+        ]);
+        Transaction::where('id', $subscription->transaction->id)->where('subscription_id', $request->subscription)->update([
+            'status' => true
+        ]);
+        DB::commit();
+
+        return redirect($request->path())->with('message', 'Subscription have been approved successfully');
+
+
+    }
+
+
+    public function LiveSubscriptions()
+    {
+        $subscriptions = Subscription::where('status', true)->get();
+        return view('member.admin.livesubscriptions', ['subscriptions' => $subscriptions]);
+    }
 }

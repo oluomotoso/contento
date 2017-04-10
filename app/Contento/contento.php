@@ -5,8 +5,12 @@ use App\category;
 use App\datasource_feed;
 use App\feed;
 use App\feed_category;
+use App\Transaction;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use PicoFeed\PicoFeedException;
 use PicoFeed\Reader\Reader;
+use Yabacon\Paystack;
 
 /**
  * Created by PhpStorm.
@@ -162,33 +166,31 @@ class contento
     function CreateFeed($title, $link, $publish, $datasource, $categories, $content)
     {
 
-            $feed = feed::create([
-                'title' => $title,
-                'link' => $link, 'published_date' => $publish,
-                'datasource_feed_id' => $datasource,
-                'content' => $content
-            ]);
+        $feed = feed::create([
+            'title' => $title,
+            'link' => $link, 'published_date' => $publish,
+            'datasource_feed_id' => $datasource,
+            'content' => $content
+        ]);
 
-            foreach ($categories as $category) {
-                $category2 = explode(',', $category);
-                $category2 = array_unique($category2);
-                $category2 = array_filter($category2);
-                $category2 = array_values($category2);
-
-
-                foreach ($category2 as $cate) {
-                    $cat = category::firstOrCreate([
-                        'category' => $cate
-                    ]);
+        foreach ($categories as $category) {
+            $category2 = explode(',', $category);
+            $category2 = array_unique($category2);
+            $category2 = array_filter($category2);
+            $category2 = array_values($category2);
 
 
-                    feed_category::firstOrCreate([
-                        'feed_id' => $feed->id,
-                        'category_id' => $cat->id]);
-                }
+            foreach ($category2 as $cate) {
+                $cat = category::firstOrCreate([
+                    'category' => $cate
+                ]);
+
+
+                feed_category::firstOrCreate([
+                    'feed_id' => $feed->id,
+                    'category_id' => $cat->id]);
             }
-
-
+        }
 
 
     }
@@ -196,32 +198,56 @@ class contento
     public
     function UpdateFeed($title, $link, $publish, $categories, $content)
     {
-            $feed = feed::where('link', $link)->update([
-                'title' => $title,
-                'published_date' => $publish,
-                'content' => $content
-            ]);
+        $feed = feed::where('link', $link)->update([
+            'title' => $title,
+            'published_date' => $publish,
+            'content' => $content
+        ]);
 
-            foreach ($categories as $category) {
-                $category2 = explode(',', $category);
-                $category2 = array_unique($category2);
-                $category2 = array_filter($category2);
-                $category2 = array_values($category2);
-
-
-                foreach ($category2 as $cate) {
-                    $cat = category::firstOrCreate([
-                        'category' => $cate
-                    ]);
+        foreach ($categories as $category) {
+            $category2 = explode(',', $category);
+            $category2 = array_unique($category2);
+            $category2 = array_filter($category2);
+            $category2 = array_values($category2);
 
 
-                    feed_category::firstOrCreate([
-                        'feeds_id' => $feed->id,
-                        'categories_id' => $cat->id]);
-                }
+            foreach ($category2 as $cate) {
+                $cat = category::firstOrCreate([
+                    'category' => $cate
+                ]);
+
+
+                feed_category::firstOrCreate([
+                    'feeds_id' => $feed->id,
+                    'categories_id' => $cat->id]);
             }
+        }
 
 
     }
+
+    public function RedirectPaystack(Request $request)
+    {
+        $user = Auth::user();
+        $transaction = Transaction::find($request->transaction_id);
+        $paystack = new Paystack('sk_test_bfd640ea5e3ad1610c783b3f47b4a7079373c881');
+        $amount = $transaction->amount * 100;
+        try {
+            $tranx = $paystack->transaction->initialize([
+                'amount' => $amount,       // in kobo
+                'email' => $user->email,         // unique to customers
+                'reference' => $transaction->id, // unique to transactions
+            ]);
+        } catch (\Yabacon\Paystack\Exception\ApiException $e) {
+            print_r($e->getResponseObject());
+            die($e->getMessage());
+        }
+
+// store transaction reference so we can query in case user never comes back
+// perhaps due to network issue
+        // redirect to page so User can pay
+        return $tranx->data->authorization_url;
+    }
+
 
 }

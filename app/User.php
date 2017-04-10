@@ -31,4 +31,9 @@ class User extends Authenticatable
     {
         return $this->hasOne('App\User_profile');
     }
+
+    public function api_data()
+    {
+        return $this->hasMany('App\Api_data');
+    }
 }

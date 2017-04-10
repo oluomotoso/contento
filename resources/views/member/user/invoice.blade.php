@@ -41,7 +41,8 @@
                                 <header class="clearfix">
                                     <div class="row">
                                         <div class="col-sm-6 mt-md">
-                                            <h4 class="h4 m-none text-dark text-bold">INVOICE NO: #{{$subscription->id}}</h4>
+                                            <h4 class="h4 m-none text-dark text-bold">INVOICE NO:
+                                                #{{$subscription->id}}</h4>
                                         </div>
                                     </div>
                                 </header>
@@ -50,7 +51,8 @@
                                         <div class="col-md-9">
                                             <div class="bill-to">
                                                 @if($subscription->status==false)
-                                                    <h4 class="h2 m-none text-dark text-bold">STATUS: <span class="text-danger">PENDING PAYMENT</span>
+                                                    <h4 class="h2 m-none text-dark text-bold">STATUS: <span
+                                                                class="text-danger">PENDING PAYMENT</span>
                                                     </h4>
                                                     <br>
                                                     <form method='POST' action='https://voguepay.com/pay/'>
@@ -68,7 +70,8 @@
                                                         <input type='hidden' name='fail_url'
                                                                value="{{ url('/voguepay/failure') }}"/>
 
-                                                        <input type='hidden' name='developer_code' value='56fb6c9ed9764'/>
+                                                        <input type='hidden' name='developer_code'
+                                                               value='56fb6c9ed9764'/>
                                                         <input type='hidden' name='store_id' value='405'/>
                                                         <input type='hidden' name='total'
                                                                value='{{$subscription->transaction->amount}}'/>
@@ -85,7 +88,8 @@
                                                     <h2 class="h2 m-none text-dark text-bold">OR</h2>
                                                     <br>
                                                     <div>
-                                                        <h3 class="h3 m-none text-dark text-bold">FEMTOSH GLOBAL KONCEPT</h3>
+                                                        <h3 class="h3 m-none text-dark text-bold">FEMTOSH GLOBAL
+                                                            KONCEPT</h3>
                                                         &nbsp;
                                                         <h4 class="h4 m-none text-dark text-bold">0116466377 (GTB)</h4>
                                                         &nbsp;
@@ -129,8 +133,9 @@
                                             <thead>
                                             <tr class="h4 text-dark">
                                                 <th id="cell-item" class="text-semibold">Sources</th>
-                                                <th id="cell-price" class="text-center text-semibold">Price</th>
-                                                <th id="cell-qty" class="text-center text-semibold">Duration(Months)</th>
+                                                <th id="cell-price" class="text-center text-semibold">Actual Cost</th>
+                                                <th id="cell-qty" class="text-center text-semibold">Duration(Months)
+                                                </th>
                                                 <th class="text-center text-semibold">Discount</th>
                                                 <th id="cell-total" class="text-center text-semibold">Total</th>
                                             </tr>
@@ -141,11 +146,11 @@
                                                     from @foreach($subscription->feeds as $feed)
                                                         <h6>{{$feed->feed->datasource->name}}</h6>
                                                     @endforeach</td>
-                                                <td class="text-center">{{$price[0]->cost*$subscription->transaction->currency->rate*count($subscription->feeds)*$subscription->plan->month .' '.$subscription->transaction->currency->code}}</td>
+                                                <td class="text-center">{{$subscription->transaction->actual_cost.' '.country($subscription->transaction->currency->country)->getCurrency()['iso_4217_code']}}</td>
                                                 <td class="text-center">{{$subscription->plan->month}}</td>
-                                                <td class="text-center text-danger">
-                                                    - {{((($price[0]->cost*$subscription->transaction->currency->rate*count($subscription->feeds)*$subscription->plan->month)-$subscription->transaction->amount)/($price[0]->cost*$subscription->transaction->currency->rate*count($subscription->feeds)*$subscription->plan->month))*100 .'%'}}</td>
-                                                <td class="text-center">{{$subscription->transaction->amount.' '.$subscription->transaction->currency->code}}</td>
+                                                <td class="text-center text-success">
+                                                    - {{$subscription->transaction->discount .'% off'}}</td>
+                                                <td class="text-center">{{$subscription->transaction->amount.' '.country($subscription->transaction->currency->country)->getCurrency()['iso_4217_code']}}</td>
                                             </tr>
                                             </tbody>
                                         </table>
@@ -158,21 +163,35 @@
                                                     <tbody>
                                                     <tr class="b-top-none">
                                                         <td colspan="2">Total</td>
-                                                        <td class="text-left">{{$price[0]->cost*$subscription->transaction->currency->rate*count($subscription->feeds)*$subscription->plan->month.' '.$subscription->transaction->currency->code}}</td>
+                                                        <td class="text-left">{{$subscription->transaction->actual_cost.' '.country($subscription->transaction->currency->country)->getCurrency()['iso_4217_code']}}</td>
                                                     </tr>
                                                     <tr>
                                                         <td colspan="2">Discount</td>
                                                         <td class="text-left text-danger">
-                                                            - {{($price[0]->cost*$subscription->transaction->currency->rate*count($subscription->feeds)*$subscription->plan->month)-$subscription->transaction->amount.' '.$subscription->transaction->currency->code}}</td>
+                                                            - {{$subscription->transaction->actual_cost-$subscription->transaction->amount .' '.country($subscription->transaction->currency->country)->getCurrency()['iso_4217_code']}}</td>
                                                     </tr>
                                                     <tr class="h4">
                                                         <td colspan="2">Grand Total</td>
                                                         <td class="text-left text-success">
-                                                            <b>{{$subscription->transaction->amount.' '.$subscription->transaction->currency->code}}</b>
+                                                            <b>{{$subscription->transaction->amount.' '.country($subscription->transaction->currency->country)->getCurrency()['iso_4217_code']}}</b>
                                                         </td>
                                                     </tr>
                                                     </tbody>
+
                                                 </table>
+                                                <form method='POST' action='{{url('/user/pay-online')}}'>
+
+                                                    <input type='hidden' name='subscription_id'
+                                                           value='{{$subscription->id}}'/>
+                                                    <input type='hidden' name='transaction_id'
+                                                           value="{{$subscription->transaction->id}}"/>
+                                                    {{csrf_field()}}
+                                                    <div class="form-group">
+                                                        <button type="submit" class="btn btn-success">PAY ONLINE NOW
+                                                        </button>
+                                                    </div>
+
+                                                </form>
                                                 @endif
                                             </div>
                                         </div>

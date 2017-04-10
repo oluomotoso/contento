@@ -6,25 +6,35 @@ use Illuminate\Database\Eloquent\Model;
 
 class Subscription extends Model
 {
-    protected $fillable = ['user_id', 'name', 'subscription_key', 'plan_id', 'trial_ends_at', 'ends_at'];
+    protected $fillable = ['user_id', 'name', 'subscription_key', 'plan_id', 'trial_ends_at', 'ends_at','status','number_of_domains'];
 
+    protected $dates = [
+        'created_at',
+        'updated_at',
+        'ends_at',
+        'trial_ends_at'
+    ];
     public function feeds()
     {
-        return $this->hasMany('femtosh\theaggregator\models\subscription_feed', 'subscription_id');
+        return $this->hasMany('App\Subscription_feed', 'subscription_id');
     }
 
     public function transaction()
     {
-        return $this->hasOne('femtosh\theaggregator\models\transaction', 'transaction_id');
+        return $this->hasOne('App\Transaction');
     }
 
     public function plan()
     {
-        return $this->belongsTo('femtosh\theaggregator\models\plan', 'plan_id');
+        return $this->belongsTo('App\Plan', 'plan_id');
+    }
+    public function user()
+    {
+        return $this->belongsTo('App\User');
     }
 
     public function domain()
     {
-        return $this->belongsTo('femtosh\theaggregator\models\user_website', 'user_website_id');
+        return $this->hasMany('App\Subscription_domain');
     }
 }
