@@ -9,6 +9,7 @@ use App\currency;
 use App\datasource_feed;
 use App\Notifications\NotifySubscription;
 use App\Plan;
+use App\Published_feed;
 use App\Subscription;
 use App\Subscription_domain;
 use App\Subscription_feed;
@@ -188,7 +189,7 @@ class UserController extends Controller
             if (count($subscription->domain) >= $subscription->number_of_domains) {
                 return redirect('user/manage-subscriptions')->with('message', 'Maximum allowed domains reached');
             }
-            $domain = User_domain::updateOrCreate(['url' => $request->url, 'user_id' => $user->id, 'platform_id' => 1,'api_data_id']);
+            $domain = User_domain::updateOrCreate(['url' => $request->url, 'user_id' => $user->id, 'platform_id' => 1, 'api_data_id']);
             Subscription_domain::updateOrCreate(['subscription_id' => $request->subscription, 'user_domain_id' => $domain->id], ['platform_id' => 2]);
             return redirect('user/manage-subscriptions')->with('message', 'Domain added successfully, click domain to manage content');
         } elseif (isset($_POST['submit_blogger'])) {
@@ -234,7 +235,8 @@ class UserController extends Controller
         if (date("Y m d H:i:s") > $subscription->ends_at) {
             return redirect('user/manage-subscriptions')->withErrors('Your subscription has expired, please renew.');
         }
-        return view('member.user.managedomain', ['subscription' => $subscription]);
+        $published = Published_feed::where('subscription_id', $sub)->where('domain_id', $d)->get('feed_id')
+        return view('member.user.managedomain', ['subscription' => $subscription, 'published' => $published]);
     }
 
 

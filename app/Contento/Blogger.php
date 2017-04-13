@@ -9,7 +9,11 @@
 namespace App\Contento;
 
 
+use App\feed;
+use App\Picasaphoto;
+use App\Subscription_domain;
 use App\User_domain;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class Blogger
@@ -35,7 +39,71 @@ class Blogger
         $this->client->addScope('openid');
         $this->client->setAccessType('offline');
         $this->client->addScope(\Google_Service_Blogger::BLOGGER);
+        $this->client->addScope('https://picasaweb.google.com/data');
 
+
+    }
+
+    public function GetMultipleImageUrl($content)
+    {
+        preg_match_all('/src="(.*?)"/', $content, $matches);
+        return ($matches[1]);
+
+    }
+
+    function uploadPhoto($httpClient, $id, $image_path, $title = "")
+    {
+        $body = fopen($image_path, 'r');
+        $data = [
+            'body' => $body
+        ];
+        if ($title != "") {
+            $data['headers'] = ['Slug' => $title];
+        }
+        $response = $httpClient->post("https://picasaweb.google.com/data/feed/api/user/default/albumid/" . $id, $data);
+        $xml_response = simplexml_load_string($response->getBody());
+        return $xml_response;
+
+    }
+
+    public function PublishPostTOBlogger($feed_id, $domain)
+    {
+        $sub_domain = Subscription_domain::find($domain);
+        $data = $sub_domain->user_domain->api_data;
+        $this->client->setAccessToken($data->token);
+        $feed = feed::find($feed_id);
+        //$this->UploadImageToPicasa($data->refresh_token);
+        $httpClient = $this->client->authorize();
+        $content = $feed->content;
+        $photos = $this->GetMultipleImageUrl($content);
+        foreach ($photos as $photo) {
+            $mime = \GuzzleHttp\Psr7\mimetype_from_filename($photo);
+            $supported = 'image/bmp image/gif image/jpeg image/png';
+            if (str_contains($supported, $mime) !== false) {
+                $db_photo = Picasaphoto::where('original_url', $photo)->where('api_data_id', $data->id)->first();
+                if (count($db_photo) > 0) {
+                } else {
+                    $response = $this->uploadPhoto($httpClient, 'default', $photo, $photo);
+                    $db_photo = Picasaphoto::updateOrCreate([
+                        'original_url' => $photo,
+                        'api_data_id' => $data->id], [
+                        'picasa_id' => $response->id,
+                        'picasa_link' => $response->content['src']
+
+                    ]);
+                }
+                $new_photo = $db_photo->picasa_link;
+                $content = str_replace($photo, $new_photo, $content);
+
+            }
+        }
+        $post = new \Google_Service_Blogger_Post();
+        $post->setTitle($feed->title);
+        $post->setContent($content);
+
+        $service = new \Google_Service_Blogger($this->client);
+
+        $service->posts->insert($sub_domain->user_domain->domain_id, $post);
 
     }
 

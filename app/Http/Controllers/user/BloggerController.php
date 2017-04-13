@@ -4,17 +4,26 @@ namespace App\Http\Controllers\user;
 
 use App\Api_data;
 use App\feed;
+use App\Jobs\BloggerAction;
 use App\Jobs\UpdateBlogListForUser;
+use App\Picasaphoto;
+use App\Published_feed;
 use App\Subscription_domain;
 use App\User_domain;
+use Doctrine\Common\Cache\ArrayCache;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Doctrine\Common\Cache\FilesystemCache;
+use EasyRequest;
+use RemoteImageUploader\Factory;
+use RemoteImageUploader\Helper;
 
 class BloggerController extends Controller
 {
     protected $client;
+    protected $cacher = null;
 
     public function __construct()
     {
@@ -113,60 +122,16 @@ class BloggerController extends Controller
 
     }
 
-    public function UploadPhotoToPicasa()
-    {
-
-
-    }
-
-    public function GetMultipleImageUrl($content)
-    {
-        preg_match_all('/src="(.*?)"/', $content, $matches);
-        return ($matches[1]);
-
-    }
 
     public function PostSubscriptionDomain(Request $request)
     {
-        $user = Auth::user();
-        $sub_domain = Subscription_domain::find($request->domain);
-        $data = $sub_domain->user_domain->api_data;
-        $token = $data->token;
-        $this->client->setAccessToken($token);
-        if ($this->client->isAccessTokenExpired()) {
-            $this->client->refreshToken($data->refresh_token);
-            $token = $this->client->getAccessToken();
-            $this->client->setAccessToken($token);
-            Api_data::updateOrCreate(['user_id' => $user->id, 'email' => $data->email], [
-                'token' => json_encode($token)
-            ]);
-        }
-        $feed = feed::find($request->feed);
-        $client = new Client();
-        $host = 'http://picasaweb.google.com/data/feed/api/user/default/albumid/default';
-        $image = 'http://loftysms.com/images/logo.png';
-        $mime = \GuzzleHttp\Psr7\mimetype_from_filename($image);
-        $request = $client->request('post', $host, [
-            'multipart' => [
-                ['Content-Type'=>$mime,'name' => $image, 'contents' => fopen($image, 'r')]
-            ],
-        ]);
-        $request->withHeader('authorization', $token);
-        $response = $client->send($request);
-        $response = json_decode($response->getBody(), true);
-
-        var_dump($response);
-        exit();
-
-
-        $post = new \Google_Service_Blogger_Post();
-        $post->setTitle($feed->title);
-        $post->setContent($feed->content);
-
-        $service = new \Google_Service_Blogger($this->client);
-
-        $service->posts->insert($sub_domain->user_domain->domain_id, $post);
+        $feed = $request->feed;
+        $domain = $request->domain;
+        Published_feed::firstOrCreate(['feed_id' => $feed, 'domain_id' => $domain,'subscription_id'=>$request->subscription]);
+        $this->dispatch(new BloggerAction($feed, $domain));
         return redirect('user/manage-domain/' . $request->subscription . '/d/' . $request->domain . '')->with('message', 'published_successfully');
 
     }
+
+
 }
