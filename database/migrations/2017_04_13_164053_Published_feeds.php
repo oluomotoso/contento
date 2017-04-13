@@ -20,7 +20,7 @@ class PublishedFeeds extends Migration
             $table->integer('subscription_id')->unsigned();
             $table->foreign('subscription_id')->references('id')->on('subscriptions');//
             $table->integer('domain_id')->unsigned();
-            $table->foreign('domain_id')->references('id')->on('Subscription_domains');//
+            $table->foreign('domain_id')->references('id')->on('subscription_domains');//
             $table->timestamps();
         });
     }
