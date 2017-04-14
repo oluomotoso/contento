@@ -33,27 +33,27 @@ class LoginController extends Controller
      *
      * @return void
      */
+    protected $redirectTo = '/user/dashboard';
+
     public function __construct()
     {
         $this->middleware('guest', ['except' => 'logout']);
     }
+
     protected function redirectTo()
     {
         $user = Auth::user();
-        if ($user->email == null || $user->password == null || $user->phoneNumber = null || $user->country == null) {
-            return ('user/settings');
-        } else {
-            // Logic that determines where to send the user
-            if ($user->user_role_id == 5) {
-                return ('/admin');
+        // Logic that determines where to send the user
+        if ($user->user_role_id == 5) {
+            return ('/admin');
 
-            } elseif ($user->user_role_id == 2) {
-                return ('/reseller');
-            }
-
-            return ('/user');
+        } elseif ($user->user_role_id == 2) {
+            return ('/reseller');
         }
+
+        return ('/user');
     }
+
 
     public function redirectToFacebook()
     {

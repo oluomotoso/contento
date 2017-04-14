@@ -28,13 +28,6 @@
 
                             </a>
                         </li>
-                        <li class="dropdown site-menu-item has-section has-sub">
-                            <a class="dropdown-toggle" href="{{url('/user/pricing')}}"
-                               data-dropdown-toggle="false">
-                                <i class="site-menu-icon wb-payment" aria-hidden="true"></i>
-                                <span class="site-menu-title">Plans & Pricing</span>
-                            </a>
-                        </li>
                     </ul>
                 </div>
             </div>
