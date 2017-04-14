@@ -15,11 +15,11 @@ class CreateFeedsTable extends Migration
     {
         Schema::create('feeds', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('title');
+            $table->text('title');
             $table->text('description')->nullable();
             $table->text('content')->nullable();
             $table->text('grabbed_content')->nullable();
-            $table->string('link')->unique();
+            $table->text('link');
             $table->integer('datasource_feed_id')->unsigned();
             $table->foreign('datasource_feed_id')->references('id')->on('datasources_feeds');
             $table->timestamp('published_date');

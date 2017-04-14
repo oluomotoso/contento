@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use PicoFeed\Reader\Reader;
 
 class AdminController extends Controller
 {
@@ -74,6 +75,37 @@ class AdminController extends Controller
         return view('member.admin.managefeeds', ['datas' => $datas]);
     }
 
+    public function ManageFeeds(Request $request)
+    {
+
+        try {
+            $reader = new Reader();
+            $resource = $reader->download($request->url);
+
+            // Return the right parser instance according to the feed format
+            $parser = $reader->getParser(
+                $resource->getUrl(),
+                $resource->getContent(),
+                $resource->getEncoding()
+            );
+            $feed2 = $parser->execute();
+
+            // Print the feed properties with the magic method __toString()
+            $feed_title = $feed2->getTitle();
+            $feed_description = $feed2->getDescription();
+            datasource_feed::firstOrCreate([
+                'name' => $feed_title,
+                'description' => $feed_description,
+                'datasources_id' => $request->datasource_id,
+                'url' => $request->url
+            ]);
+            return redirect($request->path())->with('message', 'feeds saved successfully');
+
+        } catch (\Exception $e) {
+            return redirect($request->path())->withErrors($e->getMessage())->withInput();
+
+        }
+    }
     public function GetSiteSettings()
     {
         $currencies = currency::all();
