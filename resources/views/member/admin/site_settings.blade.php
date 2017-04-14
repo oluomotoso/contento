@@ -61,9 +61,11 @@
                                             Submit Button
                                         </button>
                                     </form>
-                                    @foreach($currencies as $currency)
-                                        <li>{{country($currency->country)->getCurrency()['iso_4217_name'].':'.$currency->rate_to_usd}}</li>
-                                    @endforeach
+                                    @if($currencies !== null)
+                                        @foreach($currencies as $currency)
+                                            <li>{{country($currency->country)->getCurrency()['iso_4217_name'].':'.$currency->rate_to_usd}}</li>
+                                        @endforeach
+                                    @endif
                                 </div>
 
                                 <div class="col-md-6">
