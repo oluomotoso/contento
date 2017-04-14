@@ -34,9 +34,18 @@ class AdminController extends Controller
         $user = Auth::user();
         if (isset($_POST['add'])) {
             try {
-                $source = datasource::updateOrCreate(['url' => $request->url], ['user_id' => $user->id])->get();
-                $this->dispatch(new FindFeeds($request->url, $source->id));
+                $setting = datasource::where('url', $request->url)->count();
+                if ($setting > 0) {
+                    $source = datasource::where('url', $request->url)->get();
+                    $this->dispatch(new FindFeeds($request->url, $source[0]->id));
+                } else {
+                    $source = datasource::create([
+                        'url' => $request->url,
+                        'user_id' => $user->id
+                    ]);
+                    $this->dispatch(new FindFeeds($request->url, $source->id));
 
+                }
                 return redirect($request->path())->with('message', 'datasource saved successfully');
             } catch (\Exception $e) {
                 return redirect($request->path())->withErrors($e->getMessage())->withInput();
@@ -54,8 +63,8 @@ class AdminController extends Controller
                     'status' => false
                 ]);
             }
-            // = datasource_feed::orderBy('name', 'asc')->get();
-            return redirect('/admin/manage-feeds');
+            //$datas = datasource_feed::where('datasource_id', $request->datasource_id)->get();
+            return redirect('admin/manage-feeds');
         }
     }
 
