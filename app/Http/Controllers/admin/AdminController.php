@@ -96,7 +96,7 @@ class AdminController extends Controller
             datasource_feed::firstOrCreate([
                 'name' => $feed_title,
                 'description' => $feed_description,
-                'datasources_id' => $request->datasource_id,
+                'datasource_id' => $request->datasource_id,
                 'url' => $request->url
             ]);
             return redirect($request->path())->with('message', 'feeds saved successfully');
