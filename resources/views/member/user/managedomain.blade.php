@@ -7,7 +7,7 @@
                 <p class="pull-right text-success">
                     Linked
                 </p>
-                @else
+            @else
                 <p class="pull-right text-danger">
                     Not Linked
                 </p>
@@ -57,7 +57,9 @@
                             @foreach($feeds->feed->feed as $feed)
                                 <tr>
                                     <td><p>{{$feed->title}}</p><i
-                                                class="text-success">{{$feed->datasources_feed->Datasource->url}}</i>
+                                                class="text-success">{{$feed->datasources_feed->Datasource->url}}
+                                        </i>
+                                        <p>@if(($feed->published==true) && ($subscription->domain[0]->published ==true))<i class="text-primary">{{'published'}}</i>@endif</p>
                                     </td>
                                     <td>@foreach($feed->category as $category)
                                             <p>{{$category->category->category}}</p>@endforeach</td>
@@ -68,10 +70,16 @@
                                             <input name="subscription" value="{{$subscription->id}}" type="hidden">
                                             <input name="domain" value="{{$subscription->domain[0]->id}}" type="hidden">
                                             <input name="feed" value="{{$feed->id}}" type="hidden">
-                                            <p><button type="submit" id="button" class="btn btn-success">Publish
-                                            </button></p>
-                                            <p><button type="submit" id="button" class="btn btn-primary">Add to Draft
-                                            </button></p>
+                                            <p>
+                                                <button type="submit" id="button" class="btn btn-success" name="publish"
+                                                        value="1">Publish
+                                                </button>
+                                            </p>
+                                            <p>
+                                                <button type="submit" id="button" class="btn btn-primary" name="publish"
+                                                        value="2">Add to Draft
+                                                </button>
+                                            </p>
                                         </form>
                                     </td>
                                 </tr>

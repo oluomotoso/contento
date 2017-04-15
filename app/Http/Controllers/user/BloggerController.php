@@ -127,8 +127,8 @@ class BloggerController extends Controller
     {
         $feed = $request->feed;
         $domain = $request->domain;
-        Published_feed::firstOrCreate(['feed_id' => $feed, 'domain_id' => $domain,'subscription_id'=>$request->subscription]);
-        $this->dispatch(new BloggerAction($feed, $domain));
+        Published_feed::firstOrCreate(['feed_id' => $feed, 'domain_id' => $domain, 'subscription_id' => $request->subscription]);
+        $this->dispatch(new BloggerAction($feed, $domain, $request->publish));
         return redirect('user/manage-domain/' . $request->subscription . '/d/' . $request->domain . '')->with('message', 'published_successfully');
 
     }

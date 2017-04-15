@@ -66,7 +66,7 @@ class Blogger
 
     }
 
-    public function PublishPostTOBlogger($feed_id, $domain)
+    public function PublishPostTOBlogger($feed_id, $domain, $publish)
     {
         $sub_domain = Subscription_domain::find($domain);
         $data = $sub_domain->user_domain->api_data;
@@ -102,10 +102,14 @@ class Blogger
         $post->setContent($content);
 
         $service = new \Google_Service_Blogger($this->client);
+        if ($publish == 1) {
+            $service->posts->insert($sub_domain->user_domain->domain_id, $post);
+        } elseif ($publish == 2) {
+            $service->posts->insert($sub_domain->user_domain->domain_id, $post, ['isDraft' => true]);
 
-        $service->posts->insert($sub_domain->user_domain->domain_id, $post);
-
+        }
     }
+
 
     public function GetAllBlogsInAccount($user)
     {

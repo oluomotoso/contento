@@ -6,13 +6,25 @@ use Illuminate\Database\Eloquent\Model;
 
 class Subscription_domain extends Model
 {
-    protected $fillable = ['url', 'subscription_id', 'platform_id','user_domain_id'];
+    protected $fillable = ['url', 'subscription_id', 'platform_id', 'user_domain_id'];
 
     public function api_data()
     {
         return $this->hasOne('App\Api_data');
     }
-    public function user_domain(){
+
+    public function user_domain()
+    {
         return $this->belongsTo('App\User_domain');
+    }
+
+    public function published()
+    {
+        if ($this->hasOne('App\Published_feed','domain_id')) {
+            return true;
+        } else {
+            return false;
+        }
+
     }
 }

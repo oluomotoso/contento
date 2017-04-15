@@ -20,11 +20,13 @@ class BloggerAction implements ShouldQueue
      */
     protected $feed;
     protected $domain;
+    protected $publish;
 
-    public function __construct($feed, $domain)
+    public function __construct($feed, $domain, $publish)
     {
         $this->feed = $feed;
         $this->domain = $domain;
+        $this->publish = $publish;
     }
 
     /**
@@ -35,6 +37,6 @@ class BloggerAction implements ShouldQueue
     public function handle(Blogger $blogger)
     {
         //
-        $blogger->PublishPostTOBlogger($this->feed, $this->domain);
+        $blogger->PublishPostTOBlogger($this->feed, $this->domain,$this->publish);
     }
 }
