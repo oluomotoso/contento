@@ -59,7 +59,8 @@
                                     <td><p>{{$feed->title}}</p><i
                                                 class="text-success">{{$feed->datasources_feed->Datasource->url}}
                                         </i>
-                                        <p>@if(($feed->published==true) && ($subscription->domain[0]->published ==true))<i class="text-primary">{{'published'}}</i>@endif</p>
+                                        <p>@if(count($feed->published)>0)<i
+                                                    class="text-primary">{{'published'}}</i>@endif</p>
                                     </td>
                                     <td>@foreach($feed->category as $category)
                                             <p>{{$category->category->category}}</p>@endforeach</td>

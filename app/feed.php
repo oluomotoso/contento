@@ -21,11 +21,8 @@ class feed extends Model
 
     public function published()
     {
-        if ($this->hasOne('App\Published_feed')) {
-            return true;
-        } else {
-            return false;
-        }
+
+       return $this->hasMany('App\Published_feed');
 
     }
 

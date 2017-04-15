@@ -228,6 +228,8 @@ class UserController extends Controller
         //$domain = User_domain::where('url', $domain)->where('user_id', $user->id)->first();
         $subscription = Subscription::with(['domain' => function ($query) use ($d, $sub) {
             $query->where('id', $d);
+        }, 'feeds.feed.feed.published' => function ($query2) use ($d, $sub) {
+            $query2->where('subscription_id', $sub)->where('domain_id', $d);
         }])->find($sub);
         if ($subscription->user_id !== $user->id) {
             return redirect('user/manage-subscriptions');
@@ -235,7 +237,6 @@ class UserController extends Controller
         if (date("Y m d H:i:s") > $subscription->ends_at) {
             return redirect('user/manage-subscriptions')->withErrors('Your subscription has expired, please renew.');
         }
-        //$published = Published_feed::where('subscription_id', $sub)->where('domain_id', $d)->get('feed_id');
         return view('member.user.managedomain', ['subscription' => $subscription]);
     }
 

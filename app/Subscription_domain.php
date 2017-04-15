@@ -17,14 +17,4 @@ class Subscription_domain extends Model
     {
         return $this->belongsTo('App\User_domain');
     }
-
-    public function published()
-    {
-        if ($this->hasOne('App\Published_feed','domain_id')) {
-            return true;
-        } else {
-            return false;
-        }
-
-    }
 }
