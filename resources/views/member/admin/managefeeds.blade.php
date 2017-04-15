@@ -91,7 +91,6 @@
 <script>
     $(document).ready(function () {
         $('#dataTables-message').DataTable({
-            order: [[2, 'desc']]
         });
     });
 </script>
