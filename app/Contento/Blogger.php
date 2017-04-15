@@ -28,7 +28,7 @@ class Blogger
         }
         $client_id = '465529800621-4vstv6illt2r65c30f0qa71fn53m73ha.apps.googleusercontent.com';
         $client_secret = 'Rrp2BuDcuZCEIhu8n_ehiHtF';
-        $redirect_uri = 'http://localhost/contento/public/user/link-to-google';
+        $redirect_uri = 'http://www.contento.com.ng/user/link-to-google';
         $this->client = new \Google_Client();
         $this->client->setClientId($client_id);
         $this->client->setClientSecret($client_secret);
