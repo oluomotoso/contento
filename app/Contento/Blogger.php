@@ -80,19 +80,25 @@ class Blogger
             $mime = \GuzzleHttp\Psr7\mimetype_from_filename($photo);
             $supported = 'image/bmp image/gif image/jpeg image/png';
             if (str_contains($supported, $mime) !== false) {
-                $db_photo = Picasaphoto::where('original_url', $photo)->where('api_data_id', $data->id)->first();
-                if (count($db_photo) > 0) {
+                if (strpos($photo, 'blogspot') !== false) {
+                    $new_photo = $photo;
                 } else {
-                    $response = $this->uploadPhoto($httpClient, 'default', $photo, $photo);
-                    $db_photo = Picasaphoto::updateOrCreate([
-                        'original_url' => $photo,
-                        'api_data_id' => $data->id], [
-                        'picasa_id' => $response->id,
-                        'picasa_link' => $response->content['src']
+                    $db_photo = Picasaphoto::where('original_url', $photo)->where('api_data_id', $data->id)->first();
+                    if (count($db_photo) > 0) {
+                    } else {
+                        $response = $this->uploadPhoto($httpClient, 'default', $photo, $photo);
 
-                    ]);
+                        $db_photo = Picasaphoto::updateOrCreate([
+                            'original_url' => $photo,
+                            'api_data_id' => $data->id], [
+                            'picasa_id' => $response->id,
+                            'picasa_link' => $response->content['src']
+
+                        ]);
+                    }
+                    $new_photo = $db_photo->picasa_link;
                 }
-                $new_photo = $db_photo->picasa_link;
+
                 $content = str_replace($photo, $new_photo, $content);
 
             }
