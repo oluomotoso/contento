@@ -70,8 +70,9 @@
                                         @elseif($post->status==0)
                                             <button class="btn btn-success" name="toggle_feed_status">Activate
                                             </button>
-
                                         @endif
+                                        <button class="btn btn-success" name="activate_grab">Activate Grab
+                                        </button>
 
                                     </form>
                                 </td>

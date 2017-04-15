@@ -8,6 +8,7 @@ use App\feed_category;
 use App\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use PicoFeed\Config\Config;
 use PicoFeed\PicoFeedException;
 use PicoFeed\Reader\Reader;
 use Yabacon\Paystack;
@@ -82,24 +83,24 @@ class contento
                         $resource->getEncoding()
                     );
 
+                    if ($source->do_grab == true) {
+                        $config = new Config();
+                        $config->setGrabberRulesFolder('pico/rules');
+                        $parser->enableContentGrabber();
+                        $parser->setConfig($config);
+
+                    }
                     // Return a Feed object
                     $feed = $parser->execute();
                     $etag = $resource->getEtag();
                     $last_modified = $resource->getLastModified();
-                    // Print the feed properties with the magic method __toString()
-                    $site_url = $feed->getSiteUrl();
-                    $feed_title = $feed->getTitle();
                     $feed_items = $feed->getItems();
                     foreach ($feed_items as $items) {
                         $title = $items->getTitle();
                         $contents = $items->getContent();
-
                         $url = $items->getUrl();
-
-
                         $published_date = $items->getPublishedDate()->format('Y-m-d H:i:s');
                         $category = $items->getTag('category');
-
                         if (feed::where('link', $url)->count() > 0) {
                             $item = feed::where('link', $url)->get();
                             if ($item[0]->published_date < $published_date) {

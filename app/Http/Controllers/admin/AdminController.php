@@ -61,12 +61,18 @@ class AdminController extends Controller
                 ]);
             } elseif ($request->feed_status == 1) {
                 datasource_feed::where('id', $request->feed_id)->update([
-                    'status' => false
+                    'status' => false,
+                    'do_grab'=>false
                 ]);
             }
-            //$datas = datasource_feed::where('datasource_id', $request->datasource_id)->get();
-            return redirect('admin/manage-feeds');
+        } elseif (isset($_POST['activate_grab'])) {
+            datasource_feed::where('id', $request->feed_id)->update([
+                'do_grab' => true
+            ]);
         }
+        //$datas = datasource_feed::where('datasource_id', $request->datasource_id)->get();
+        return redirect('admin/manage-feeds');
+
     }
 
     public function ManageFeedsView()
@@ -106,6 +112,7 @@ class AdminController extends Controller
 
         }
     }
+
     public function GetSiteSettings()
     {
         $currencies = currency::all();
