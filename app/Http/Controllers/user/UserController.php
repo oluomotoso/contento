@@ -235,8 +235,8 @@ class UserController extends Controller
         if (date("Y m d H:i:s") > $subscription->ends_at) {
             return redirect('user/manage-subscriptions')->withErrors('Your subscription has expired, please renew.');
         }
-        $published = Published_feed::where('subscription_id', $sub)->where('domain_id', $d)->get('feed_id');
-        return view('member.user.managedomain', ['subscription' => $subscription, 'published' => $published]);
+        //$published = Published_feed::where('subscription_id', $sub)->where('domain_id', $d)->get('feed_id');
+        return view('member.user.managedomain', ['subscription' => $subscription]);
     }
 
 
