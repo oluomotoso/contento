@@ -65,7 +65,7 @@
                                     <td>{{$post->name}}</td>
                                     <td>{{$post->description}}</td>
                                     <td>{{$post->datasource->url}}</td>
-                                    <th>{{$post->feed->where('updated_at','<', '2 days')->count()}}</th>
+                                    <th>{{$post->feed->where('updated_at','>', '-2 days')->count()}}</th>
                                     <th>{{$post->updated_at->diffForHumans()}}</th>
                                 </tr>
                             @endforeach
