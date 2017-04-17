@@ -54,6 +54,8 @@
                                 <th>Name</th>
                                 <th>Description</th>
                                 <th>Website</th>
+                                <th>Total Contents</th>
+                                <th>Last Updated</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -63,6 +65,8 @@
                                     <td>{{$post->name}}</td>
                                     <td>{{$post->description}}</td>
                                     <td>{{$post->datasource->url}}</td>
+                                    <th>{{$post->feed->count()}}</th>
+                                    <th>{{$post->updated_at->diffForHumans()}}</th>
                                 </tr>
                             @endforeach
                             </tbody>
@@ -102,12 +106,12 @@
                         </button>
 
                     </div>
-            </form>
+                </form>
 
+            </div>
+            <!-- End Panel Table Tools -->
+            <!-- End Panel Table Add Row -->
         </div>
-        <!-- End Panel Table Tools -->
-        <!-- End Panel Table Add Row -->
-    </div>
     </div>
 
 @endsection
