@@ -54,7 +54,7 @@
                                 <th>Name</th>
                                 <th>Description</th>
                                 <th>Website</th>
-                                <th>Total Contents in (7) days</th>
+                                <th>Total Contents in (3) days</th>
                                 <th>Last Updated</th>
                             </tr>
                             </thead>
@@ -65,7 +65,7 @@
                                     <td>{{$post->name}}</td>
                                     <td>{{$post->description}}</td>
                                     <td>{{$post->datasource->url}}</td>
-                                    <th>{{$post->feed->where('updated_at','>', '-2 days')->count()}}</th>
+                                    <th>{{$post->feed->where('updated_at','>', '-3 days')->count()}}</th>
                                     <th>{{$post->updated_at->diffForHumans()}}</th>
                                 </tr>
                             @endforeach
