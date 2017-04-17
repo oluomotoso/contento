@@ -162,7 +162,7 @@
                         return '<input type="checkbox">';
                     }
                 },
-            ],order: [[3, 'desc']],
+            ],order: [4, 'desc'],
             'rowCallback': function (row, data, dataIndex) {
                 // Get row ID
                 var rowId = data[0];
