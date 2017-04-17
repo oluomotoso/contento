@@ -213,7 +213,7 @@ class contento
 
 
             foreach ($category2 as $cate) {
-                $cat = category::firstOrCreate([
+                $cat = category::updateOrCreate([
                     'category' => $cate
                 ]);
 
