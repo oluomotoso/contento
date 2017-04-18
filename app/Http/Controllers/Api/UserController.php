@@ -12,9 +12,9 @@ class UserController extends Controller
     {
         try {
             $user = $request->user();
-            $subscription = Subscription::where('user_id', $user->id)->get();
+            $subscription = Subscription::where('user_id', $user->id)->where('status', 1)->get();
             if (count($subscription) < 1) {
-                return 'You do not have any subscription on contento';
+                return response('You do not have any subscription on contento', 405);
             }
             return $subscription;
         } catch (\Exception $e) {
