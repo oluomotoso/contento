@@ -20,7 +20,7 @@ Route::group(['domain' => 'api.contento.com.ng'], function () {
 
     Route::group(['middleware' => 'auth:api', 'prefix' => 'user'], function () {
         Route::group(['namespace' => 'Api'], function () {
-            Route::get('/subscriptions', 'UserController@UserSubscriptions');
+            Route::get('/me/subscriptions', 'UserController@UserSubscriptions');
 
         });
     });
