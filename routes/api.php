@@ -14,11 +14,7 @@ use Illuminate\Http\Request;
 */
 Route::group(['domain' => 'api.contento.com.ng'], function () {
     Route::get('/', 'Api/PublicController@ApiLive');
-    Route::middleware('auth:api')->get('/user', function (Request $request) {
-        return $request->user();
-    });
-
-    Route::group(['middleware' => 'auth:api', 'prefix' => 'user'], function () {
+    Route::group(['middleware' => 'auth.basic'], function () {
         Route::group(['namespace' => 'Api'], function () {
             Route::get('/me/subscriptions', 'UserController@UserSubscriptions');
 
