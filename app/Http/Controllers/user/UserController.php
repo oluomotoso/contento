@@ -190,14 +190,14 @@ class UserController extends Controller
                 return redirect('user/manage-subscriptions')->with('message', 'Maximum allowed domains reached');
             }
             $domain = User_domain::updateOrCreate(['url' => $request->url, 'user_id' => $user->id, 'platform_id' => 1, 'api_data_id']);
-            Subscription_domain::updateOrCreate(['subscription_id' => $request->subscription, 'user_domain_id' => $domain->id], ['platform_id' => 2]);
+            Subscription_domain::updateOrCreate(['subscription_id' => $request->subscription, 'user_domain_id' => $domain->id], ['platform_id' => 1]);
             return redirect('user/manage-subscriptions')->with('message', 'Domain added successfully, click domain to manage content');
         } elseif (isset($_POST['submit_blogger'])) {
             $subscription = Subscription::find($request->subscription);
             if (count($subscription->domain) >= $subscription->number_of_domains) {
                 return redirect('user/manage-subscriptions')->with('message', 'Maximum allowed domains reached');
             }
-            Subscription_domain::updateOrCreate(['subscription_id' => $request->subscription, 'user_domain_id' => $request->domain], ['platform_id' => 2]);
+            Subscription_domain::updateOrCreate(['subscription_id' => $request->subscription, 'user_domain_id' => $request->domain], ['platform_id' => 1]);
             return redirect('user/manage-subscriptions')->with('message', 'Domain added successfully, click domain to manage content');
         } elseif (isset($_POST['manage_domain'])) {
             $subscription = Subscription::with(['domain' => function ($query) use ($request) {

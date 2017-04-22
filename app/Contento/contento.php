@@ -98,17 +98,18 @@ class contento
                     foreach ($feed_items as $items) {
                         $title = $items->getTitle();
                         $contents = $items->getContent();
+                        $description = $this->rip_tags($contents);
                         $url = $items->getUrl();
                         $published_date = $items->getPublishedDate()->format('Y-m-d H:i:s');
                         $category = $items->getTag('category');
                         if (feed::where('link', $url)->count() > 0) {
                             $item = feed::where('link', $url)->get();
                             if ($item[0]->published_date < $published_date) {
-                                $this->UpdateFeed($title, $url, $published_date, $category, $contents);
+                                $this->UpdateFeed($title, $url, $published_date, $category, $contents,$description);
 
                             }
                         } else {
-                            $this->CreateFeed($title, $url, $published_date, $source->id, $category, $contents);
+                            $this->CreateFeed($title, $url, $published_date, $source->id, $category, $contents,$description);
                         }
                     }
                     datasource_feed::where('id', $source->id)->update([
@@ -163,15 +164,43 @@ class contento
         }
     }
 
+    function rip_tags($string)
+    {
+
+        // ----- remove HTML TAGs -----
+        $string = preg_replace('/<[^>]*>/', ' ', $string);
+
+        // ----- remove control characters -----
+        $string = str_replace("\r", '', $string);    // --- replace with empty space
+        $string = str_replace("\n", ' ', $string);   // --- replace with space
+        $string = str_replace("\t", ' ', $string);   // --- replace with space
+
+        // ----- remove multiple spaces -----
+        $string = trim(preg_replace('/ {2,}/', ' ', $string));
+
+        return $this->TruncateStringLength($string, 200);
+
+    }
+
+    public function TruncateStringLength($text, $length)
+    {
+        $length = abs((int)$length);
+        if (strlen($text) > $length) {
+            $text = preg_replace("/^(.{1,$length})(\s.*|$)/s", '\\1...', $text);
+        }
+        return ($text);
+    }
+
     public
-    function CreateFeed($title, $link, $publish, $datasource, $categories, $content)
+    function CreateFeed($title, $link, $publish, $datasource, $categories, $content,$description)
     {
 
         $feed = feed::create([
             'title' => $title,
             'link' => $link, 'published_date' => $publish,
             'datasource_feed_id' => $datasource,
-            'content' => $content
+            'content' => $content,
+            'description'=>$description
         ]);
 
         foreach ($categories as $category) {
@@ -197,12 +226,13 @@ class contento
     }
 
     public
-    function UpdateFeed($title, $link, $publish, $categories, $content)
+    function UpdateFeed($title, $link, $publish, $categories, $content,$description)
     {
         $feed = feed::where('link', $link)->update([
             'title' => $title,
             'published_date' => $publish,
-            'content' => $content
+            'content' => $content,
+            'description'=>$description
         ]);
 
         foreach ($categories as $category) {
