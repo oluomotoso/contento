@@ -19,6 +19,8 @@ Route::get('login/google', 'Auth\LoginController@redirectToGoogle');
 Route::get('login/{provider}/callback', 'Auth\LoginController@handleProviderCallback');
 Route::get('/home', 'HomeController@index');
 Route::get('/', 'HomeController@index');
+Route::get('/latest-contents', 'HomeController@LatestContents');
+Route::post('/contact', 'HomeController@PostContact');
 
 /*Administrator only routes */
 Route::group(['middleware' => 'admin', 'prefix' => 'admin'], function () {
@@ -44,6 +46,7 @@ Route::group(['middleware' => 'auth', 'prefix' => 'user'], function () {
         Route::get('/', 'UserController@index');
         Route::get('/dashboard', 'UserController@index');
         Route::get('/create-subscription', 'UserController@ViewCreateSubscription');
+        Route::get('/create-subscription-category', 'UserController@CreateSubscriptionByCategory');
         Route::post('/create-subscription', 'UserController@PostSubscription');
         Route::post('/finalize-subscription', 'UserController@FinalizeSubscription');
         Route::get('/manage-subscriptions', 'UserController@ViewManageSubscriptions');

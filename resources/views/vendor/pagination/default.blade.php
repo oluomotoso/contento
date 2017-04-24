@@ -32,5 +32,8 @@
         @else
             <li class="disabled"><span>&raquo;</span></li>
         @endif
+        <li class="disabled">
+            <span>{{($paginator->currentPage()-1)*$paginator->perPage()+$paginator->count() .' of '.$paginator->total()}}</span>
+        </li>
     </ul>
 @endif

@@ -7,6 +7,7 @@ use App\Contento\contento;
 use App\Contento\pricing;
 use App\currency;
 use App\datasource_feed;
+use App\feed;
 use App\Notifications\NotifySubscription;
 use App\Plan;
 use App\Published_feed;
@@ -27,21 +28,23 @@ class UserController extends Controller
     //
     public function index()
     {
-        return view('member.user.default');
+        $user = Auth::user();
+        $today = new \DateTime();
+        $content = feed::where('created_at', '>', $today->modify('-1 day'))->count();
+        $subscription = Subscription::where('status', true)->where('ends_at' ,'>', date("Y m d H:i:s"))->count();
+        $sub = Subscription::where('status', true)->where('user_id', $user->id)->select('id')->get();
+        $sub_array = [];
+        foreach ($sub as $item) {
+            $sub_array[] = $item->id;
+        }
+        $published = Published_feed::whereIn('subscription_id', $sub_array)->count();
+        $domain = User_domain::where('user_id', $user->id)->count();
+        return view('member.user.dashboard', ['content' => $content, 'subscription' => $subscription, 'published' => $published, 'domain' => $domain]);
     }
 
     public function Pricing()
     {
         return view('member.user.pricing');
-    }
-
-    public function CreateSubscription()
-    {
-        $today = new \DateTime();
-        $subscriptions = datasource_feed::with(['feed' => function ($query) use ($today) {
-            $query->where('created_at', '>', $today->modify('-2 days'));
-        }])->where('status', true)->get();
-        return view('member.user.subscription', ['datas' => $subscriptions]);
     }
 
     public function ViewManageSubscriptions()
@@ -52,6 +55,22 @@ class UserController extends Controller
     }
 
     public function ViewCreateSubscription()
+    {
+        $user = Auth::user();
+        $profile = User_profile::where('user_id', $user->id)->count();
+        if ($profile > 0) {
+            $today = new \DateTime();
+            $sources = datasource_feed::with(['feed' => function ($query) use ($today) {
+                $query->where('created_at', '>', $today->modify('-7 days'));
+            }])->where('status', true)->get();
+            $plans = Plan::all();
+            return view('member.user.subscription', ['datas' => $sources, 'plans' => $plans]);
+        } else {
+            return redirect('/user/user-settings')->withErrors('You must update your profile to continue');
+        }
+    }
+
+    public function CreateSubscriptionByCategory()
     {
         $user = Auth::user();
         $profile = User_profile::where('user_id', $user->id)->count();
