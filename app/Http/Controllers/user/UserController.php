@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\user;
 
+use App\category;
 use App\Contento\Blogger;
 use App\Contento\contento;
 use App\Contento\pricing;
 use App\currency;
 use App\datasource_feed;
 use App\feed;
+use App\feed_category;
 use App\Notifications\NotifySubscription;
 use App\Plan;
 use App\Published_feed;
@@ -30,8 +32,8 @@ class UserController extends Controller
     {
         $user = Auth::user();
         $today = new \DateTime();
-        $content = feed::where('created_at', '>', $today->modify('-1 day'))->count();
-        $subscription = Subscription::where('status', true)->where('ends_at' ,'>', date("Y m d H:i:s"))->count();
+        $content = feed::where('created_at', '>', $today->modify('-7 days'))->count();
+        $subscription = Subscription::where('status', true)->where('ends_at', '>', date("Y m d H:i:s"))->count();
         $sub = Subscription::where('status', true)->where('user_id', $user->id)->select('id')->get();
         $sub_array = [];
         foreach ($sub as $item) {
@@ -76,11 +78,13 @@ class UserController extends Controller
         $profile = User_profile::where('user_id', $user->id)->count();
         if ($profile > 0) {
             $today = new \DateTime();
-            $sources = datasource_feed::with(['feed' => function ($query) use ($today) {
-                $query->where('created_at', '>', $today->modify('-7 days'));
-            }])->where('status', true)->get();
+            $sources = category::with('feed_category.feed')->withCount(['feed_category' => function ($query) use ($today) {
+                $query->where('updated_at', '>', $today->modify('-7 days'));
+            }])->orderBy('feed_category_count', 'desc')->limit(200)->get();
+            echo $sources;
+            exit();
             $plans = Plan::all();
-            return view('member.user.subscription', ['datas' => $sources, 'plans' => $plans]);
+            return view('member.user.category_subscription', ['datas' => $sources, 'plans' => $plans]);
         } else {
             return redirect('/user/user-settings')->withErrors('You must update your profile to continue');
         }

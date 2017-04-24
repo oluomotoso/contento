@@ -45,7 +45,7 @@ class HomeController extends Controller
     public function LatestContents()
     {
         $today = new \DateTime();
-        $contents = feed::where('created_at', '>', $today->modify('-7 days'))->orderBy('updated_at','desc')->paginate(20);
+        $contents = feed::where('created_at', '>', $today->modify('-1 day'))->orderBy('updated_at','desc')->paginate(20);
         return view('demo-contents', ['contents' => $contents]);
     }
 }

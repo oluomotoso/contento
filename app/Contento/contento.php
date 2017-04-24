@@ -105,11 +105,11 @@ class contento
                         if (feed::where('link', $url)->count() > 0) {
                             $item = feed::where('link', $url)->get();
                             if ($item[0]->published_date < $published_date) {
-                                $this->UpdateFeed($title, $url, $published_date, $category, $contents,$description);
+                                $this->UpdateFeed($title, $url, $published_date, $category, $contents, $description);
 
                             }
                         } else {
-                            $this->CreateFeed($title, $url, $published_date, $source->id, $category, $contents,$description);
+                            $this->CreateFeed($title, $url, $published_date, $source->id, $category, $contents, $description);
                         }
                     }
                     datasource_feed::where('id', $source->id)->update([
@@ -192,7 +192,7 @@ class contento
     }
 
     public
-    function CreateFeed($title, $link, $publish, $datasource, $categories, $content,$description)
+    function CreateFeed($title, $link, $publish, $datasource, $categories, $content, $description)
     {
 
         $feed = feed::create([
@@ -200,7 +200,7 @@ class contento
             'link' => $link, 'published_date' => $publish,
             'datasource_feed_id' => $datasource,
             'content' => $content,
-            'description'=>$description
+            'description' => $description
         ]);
 
         foreach ($categories as $category) {
@@ -226,13 +226,13 @@ class contento
     }
 
     public
-    function UpdateFeed($title, $link, $publish, $categories, $content,$description)
+    function UpdateFeed($title, $link, $publish, $categories, $content, $description)
     {
         $feed = feed::where('link', $link)->update([
             'title' => $title,
             'published_date' => $publish,
             'content' => $content,
-            'description'=>$description
+            'description' => $description
         ]);
 
         foreach ($categories as $category) {
@@ -246,8 +246,7 @@ class contento
                 $cat = category::updateOrCreate([
                     'category' => $cate
                 ]);
-
-
+                category::find($cat->id)->touch();
                 feed_category::firstOrCreate([
                     'feeds_id' => $feed->id,
                     'categories_id' => $cat->id]);

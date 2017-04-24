@@ -53,7 +53,7 @@
 
 
                         <div class="panel-footer">
-                            Total Contents in 24 hours
+                            Total Contents in 7 days
 
                         </div>
                         <a class="btn" href="{{ url('/latest-contents') }}">Latest Contents</a>
