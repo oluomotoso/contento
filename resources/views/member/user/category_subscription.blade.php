@@ -76,7 +76,7 @@
                                     <input class="form-control" placeholder="Name of Subscription"
                                            value="{{old('name')}}" name="name">
                                 </div>
-
+                                <input value="category" name="subscription_type" hidden>
                                 <div class="form-group">
                                     <div class="form-group">
                                         <label for="duration">Duration</label>

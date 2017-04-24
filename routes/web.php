@@ -29,6 +29,7 @@ Route::group(['middleware' => 'admin', 'prefix' => 'admin'], function () {
         Route::get('/dashboard', 'AdminController@index');
         Route::get('/manage-sources', 'AdminController@AddDatasourceView');
         Route::post('/manage-sources', 'AdminController@AddDatasource');
+        Route::post('/update-cost', 'AdminController@UpdateCost');
         Route::get('/manage-feeds', 'AdminController@ManageFeedsView');
         Route::post('/manage-feeds', 'AdminController@ManageFeeds');
         Route::get('/site-settings', 'AdminController@GetSiteSettings');

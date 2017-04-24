@@ -152,6 +152,102 @@
                         </section>
                     </form>
                 </div>
+                    <div class="col-md-6">
+                    <form id="form" action="{{url('/admin/update-cost')}}" class="form-horizontal" method="post">
+                        {!! csrf_field() !!}
+                        <section class="panel">
+                            <header class="panel-heading">
+                                <div class="panel-actions">
+                                    <a href="#" class="fa fa-caret-down"></a>
+                                    <a href="#" class="fa fa-times"></a>
+                                </div>
+
+                                <h2 class="panel-title">Update Feed Cost</h2>
+                            </header>
+                            <div class="panel-body">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">All Sources <span
+                                                class="required">*</span></label>
+
+                                    <div class="col-sm-9">
+                                        <select name="data[]" class="form-control" required multiple>
+                                            @foreach($activated_feeds as $source)
+                                                <option value="{{$source->id}}">{{$source->datasource->url}}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <input hidden name="type" value="source">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">Feed Cost <span
+                                                class="required">*</span></label>
+
+                                    <div class="col-sm-9">
+                                        <input type="number" name="cost" class="form-control"
+                                               placeholder="5"
+                                               value="{{old('cost')}}"
+                                               required/>
+                                    </div>
+                                </div>
+                            </div>
+                            <footer class="panel-footer">
+                                <div class="row">
+                                    <div class="col-sm-9 col-sm-offset-3">
+                                        <button class="btn btn-primary" type="submit">Submit</button>
+                                    </div>
+                                </div>
+                            </footer>
+                        </section>
+                    </form>
+                </div>
+                    <div class="col-md-6">
+                    <form id="form" action="{{url('/admin/update-cost')}}" class="form-horizontal" method="post">
+                        {!! csrf_field() !!}
+                        <section class="panel">
+                            <header class="panel-heading">
+                                <div class="panel-actions">
+                                    <a href="#" class="fa fa-caret-down"></a>
+                                    <a href="#" class="fa fa-times"></a>
+                                </div>
+
+                                <h2 class="panel-title">Update Category Cost</h2>
+                            </header>
+                            <div class="panel-body">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">Categories <span
+                                                class="required">*</span></label>
+
+                                    <div class="col-sm-9">
+                                        <select name="data[]" class="form-control" required multiple>
+                                            @foreach($categories as $category)
+                                                <option value="{{$category->id}}">{{$category->category}}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <input hidden name="type" value="category">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">Category Cost <span
+                                                class="required">*</span></label>
+
+                                    <div class="col-sm-9">
+                                        <input type="number" name="cost" class="form-control"
+                                               placeholder="5"
+                                               value="{{old('cost')}}"
+                                               required/>
+                                    </div>
+                                </div>
+                            </div>
+                            <footer class="panel-footer">
+                                <div class="row">
+                                    <div class="col-sm-9 col-sm-offset-3">
+                                        <button class="btn btn-primary" type="submit">Submit</button>
+                                    </div>
+                                </div>
+                            </footer>
+                        </section>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

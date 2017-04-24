@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\admin;
 
+use App\category;
 use App\currency;
 use App\datasource;
 use App\datasource_feed;
@@ -27,7 +28,12 @@ class AdminController extends Controller
     {
         $sources = datasource::all();
         $feeds = datasource_feed::all();
-        return view('member.admin.managesources', ['sources' => $sources, 'feeds' => $feeds]);
+        $today = new \DateTime();
+        $activated_feeds = datasource_feed::where('status', true)->get();
+        $categories = category::withCount(['feed_category' => function ($query) use ($today) {
+            $query->where('updated_at', '>', $today->modify('-7 days'));
+        }])->orderBy('feed_category_count', 'desc')->limit(200)->get();
+        return view('member.admin.managesources', ['sources' => $sources, 'feeds' => $feeds, 'categories' => $categories, 'activated_feeds' => $activated_feeds]);
     }
 
     public function AddDatasource(Request $request)
@@ -62,7 +68,7 @@ class AdminController extends Controller
             } elseif ($request->feed_status == 1) {
                 datasource_feed::where('id', $request->feed_id)->update([
                     'status' => false,
-                    'do_grab'=>false
+                    'do_grab' => false
                 ]);
             }
         } elseif (isset($_POST['activate_grab'])) {
@@ -72,6 +78,30 @@ class AdminController extends Controller
         }
         //$datas = datasource_feed::where('datasource_id', $request->datasource_id)->get();
         return redirect('admin/manage-feeds');
+
+    }
+
+    public function UpdateCost(Request $request)
+    {
+        $user = Auth::user();
+        $datas = $request->data;
+        $cost = $request->cost;
+        if ($request->type == 'source') {
+
+            foreach ($datas as $data) {
+                datasource_feed::where('id', $data)
+                    ->update(['cost' => $cost]);
+            }
+        } elseif ($request->type == 'category') {
+            foreach ($datas as $data) {
+                category::where('id', $data)
+                    ->update(['cost' => $cost]);
+            }
+        } else {
+
+        }
+        return redirect('admin/manage-sources')->with('message', 'Costs updated successfully');
+        //$datas = datasource_feed::where('datasource_id', $request->datasource_id)->get();
 
     }
 

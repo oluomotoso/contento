@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class category extends Model
 {
     //
-    protected $fillable = ['category'];
+    protected $fillable = ['category', 'cost'];
 
     public function feed_category()
     {
