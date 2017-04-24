@@ -37,7 +37,10 @@ class UserController extends Controller
 
     public function CreateSubscription()
     {
-        $subscriptions = datasource_feed::where('status', true)->get();
+        $today = new \DateTime();
+        $subscriptions = datasource_feed::with(['feed' => function ($query) use ($today) {
+            $query->where('created_at', '>', $today->modify('-2 days'));
+        }])->where('status', true)->get();
         return view('member.user.subscription', ['datas' => $subscriptions]);
     }
 
@@ -53,7 +56,10 @@ class UserController extends Controller
         $user = Auth::user();
         $profile = User_profile::where('user_id', $user->id)->count();
         if ($profile > 0) {
-            $sources = datasource_feed::where('status', true)->get();
+            $today = new \DateTime();
+            $sources = datasource_feed::with(['feed' => function ($query) use ($today) {
+                $query->where('created_at', '>', $today->modify('-7 days'));
+            }])->where('status', true)->get();
             $plans = Plan::all();
             return view('member.user.subscription', ['datas' => $sources, 'plans' => $plans]);
         } else {
