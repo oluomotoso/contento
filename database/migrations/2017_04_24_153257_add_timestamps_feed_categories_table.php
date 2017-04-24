@@ -14,7 +14,7 @@ class AddTimestampsFeedCategoriesTable extends Migration
     public function up()
     {
         Schema::table('feed_categories', function (Blueprint $table) {
-            $default = date('Y m d H:i:s');
+            $default = date('Y-m-d H:i:s');
             $table->timestamp('created_at')->default($default);
             $table->timestamp('updated_at')->default($default);
         });
