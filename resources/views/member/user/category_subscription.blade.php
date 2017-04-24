@@ -50,21 +50,19 @@
                                cellspacing="0" width="100%">
                             <thead>
                             <tr>
-                                <th><input name="select_all" value="1" type="checkbox"></th>
-                                <th>Category</th>
-                                <th>Total Contents in (7) days</th>
-                                <th>Last Updated</th>
+                                <th class="text-center"><input name="select_all" value="1" type="checkbox"></th>
+                                <th class="text-center">Category</th>
+                                <th class="text-center">Total Contents in (7) days</th>
+                                <th class="text-center">Last Updated</th>
                             </tr>
                             </thead>
                             <tbody>
                             @foreach($datas as $post)
                                 <tr>
                                     <td>{{$post->id}}</td>
-                                    <td>{{$post->name}}</td>
-                                    <td>{{$post->description}}</td>
-                                    <td>{{$post->datasource->url}}</td>
-                                    <th>{{$post->feed->count()}}</th>
-                                    <th>{{$post->updated_at->diffForHumans()}}</th>
+                                    <td class="text-center">{{$post->category}}</td>
+                                    <td class="text-center">{{$post->feed_category_count}}</td>
+                                    <th class="text-center">{{$post->updated_at->diffForHumans()}}</th>
                                 </tr>
                             @endforeach
                             </tbody>
@@ -160,7 +158,7 @@
                         return '<input type="checkbox">';
                     }
                 },
-            ], order: [[4, 'desc']],
+            ], order: [[2, 'desc']],
             'rowCallback': function (row, data, dataIndex) {
                 // Get row ID
                 var rowId = data[0];

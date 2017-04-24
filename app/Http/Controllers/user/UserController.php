@@ -78,11 +78,9 @@ class UserController extends Controller
         $profile = User_profile::where('user_id', $user->id)->count();
         if ($profile > 0) {
             $today = new \DateTime();
-            $sources = category::with('feed_category.feed')->withCount(['feed_category' => function ($query) use ($today) {
+            $sources = category::withCount(['feed_category' => function ($query) use ($today) {
                 $query->where('updated_at', '>', $today->modify('-7 days'));
             }])->orderBy('feed_category_count', 'desc')->limit(200)->get();
-            echo $sources;
-            exit();
             $plans = Plan::all();
             return view('member.user.category_subscription', ['datas' => $sources, 'plans' => $plans]);
         } else {
