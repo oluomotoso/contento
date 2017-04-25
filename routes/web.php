@@ -20,6 +20,7 @@ Route::get('login/{provider}/callback', 'Auth\LoginController@handleProviderCall
 Route::get('/home', 'HomeController@index');
 Route::get('/', 'HomeController@index');
 Route::get('/latest-contents', 'HomeController@LatestContents');
+Route::get('/content/{id}/{csrf}', 'HomeController@GetContent');
 Route::post('/contact', 'HomeController@PostContact');
 
 /*Administrator only routes */

@@ -45,7 +45,19 @@ class HomeController extends Controller
     public function LatestContents()
     {
         $today = new \DateTime();
-        $contents = feed::where('created_at', '>', $today->modify('-1 day'))->orderBy('updated_at','desc')->paginate(20);
+        $contents = feed::where('created_at', '>', $today->modify('-7 day'))->orderBy('updated_at', 'desc')->paginate(20);
         return view('demo-contents', ['contents' => $contents]);
+    }
+
+    public function GetContent($id, $csrf)
+    {
+        if (csrf_token() == $csrf) {
+            $feed = feed::select('id', 'title', 'content')->find($id);
+            if (count($feed) > 0) {
+                return view('content-detailed', ['content' => $feed]);
+
+            }
+        }
+        echo 'invalid request';
     }
 }

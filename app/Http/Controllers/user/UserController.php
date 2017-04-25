@@ -292,6 +292,11 @@ class UserController extends Controller
         return redirect()->away($contento->RedirectPaystack($request));
     }
 
+    public function GetContent($id,$csrf)
+    {
+    }
+
+
     public function ManageDomains(Request $request)
     {
         $user = Auth::user();
@@ -351,7 +356,7 @@ class UserController extends Controller
             return redirect('user/manage-subscriptions')->withErrors('Your subscription has expired, please renew.');
         }
         $ContentoRequest = new \App\Contento\Request();
-        $feeds = $ContentoRequest->SubscriptionFeeds($sub, $subre, $d,200);
+        $feeds = $ContentoRequest->SubscriptionFeeds($sub, $subre, $d, 200);
         return view('member.user.managedomain', ['feeds' => $feeds, 'domain' => $domain]);
     }
 

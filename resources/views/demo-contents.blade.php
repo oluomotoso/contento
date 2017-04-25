@@ -6,7 +6,7 @@
                 <h3>LATEST CONTENTO</h3>
                 @foreach ($contents as $content)
                     <p class="text-bold">
-                        <a>{{ $content->title}}</a><br/><i>by {{$content->datasources_feed->Datasource->url. ' '.$content->updated_at->diffForHumans()}}</i>
+                        <a target="_blank" href="{{url('content/'.$content->id.'/'.csrf_token())}}">{{ $content->title}}</a><br/><i>by {{$content->datasources_feed->Datasource->url. ' '.$content->updated_at->diffForHumans()}}</i>
                     </p>
 
                 @endforeach

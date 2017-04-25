@@ -55,7 +55,10 @@
                         <tbody>
                              @foreach($feeds as $feed)
                                 <tr>
-                                    <td><p>{{$feed->title}}</p><i
+                                    <td><p class="text-bold">
+                                            <a target="_blank" href="{{url('content/'.$feed->id.'/'.csrf_token())}}">{{ $feed->title}}</a>
+                                        </p>
+                                        <i
                                                 class="text-success">{{$feed->datasources_feed->Datasource->url}}
                                         </i>
                                         <p>@if(count($feed->published)>0)<i
