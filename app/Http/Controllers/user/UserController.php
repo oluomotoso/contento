@@ -341,29 +341,18 @@ class UserController extends Controller
         if ($subre->user_id !== $user->id) {
             return redirect('user/manage-subscriptions');
         }
-        if ($subre->is_category == false) {
-            $subscription = Subscription::with(['domain' => function ($query) use ($d, $sub) {
-                $query->where('id', $d);
-            }, 'feeds.feed.feed' => function ($query2) use ($d, $sub) {
-                $query2->limit(200);
-            }, 'feeds.feed.feed.published' => function ($query2) use ($d, $sub) {
-                $query2->where('subscription_id', $sub)->where('domain_id', $d);
-            }])->find($sub);
+        $domain = Subscription_domain::where('subscription_id', $sub)->where('user_domain_id', $d)->first();
+        if (count($domain) == 0) {
+            return redirect('user/manage-subscriptions')->withErrors('This URL is not valid for the subscription');
 
-        } else {
-            $subscription = Subscription::with(['domain' => function ($query) use ($d, $sub) {
-                $query->where('id', $d);
-            }, 'category_feeds.category.feed_category.feed' => function ($query2) use ($d, $sub) {
-                $query2->limit(200);
-            }, 'category_feeds.category.feed_category.feed.published' => function ($query2) use ($d, $sub) {
-                $query2->where('subscription_id', $sub)->where('domain_id', $d);
-            }])->find($sub);
         }
 
-        if (date("Y m d H:i:s") > $subscription->ends_at) {
+        if (date("Y m d H:i:s") > $subre->ends_at) {
             return redirect('user/manage-subscriptions')->withErrors('Your subscription has expired, please renew.');
         }
-        return view('member.user.managedomain', ['subscription' => $subscription]);
+        $ContentoRequest = new \App\Contento\Request();
+        $feeds = $ContentoRequest->SubscriptionFeeds($sub, $subre, $d);
+        return view('member.user.managedomain', ['feeds' => $feeds, 'domain' => $domain]);
     }
 
 

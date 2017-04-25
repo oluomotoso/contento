@@ -2,8 +2,8 @@
 @section('content')
     <div class="page animsition">
         <div class="page-header">
-            <h1 class="page-title">Manage {{$subscription->domain[0]->user_domain->url}}</h1>
-            @if(count($subscription->domain[0]->user_domain) ==1)
+            <h1 class="page-title">Manage {{$domain->user_domain->url}}</h1>
+            @if(count($domain->user_domain) ==1)
                 <p class="pull-right text-success">
                     Linked
                 </p>
@@ -49,12 +49,11 @@
                             <th>Title</th>
                             <th>Categories</th>
                             <th>Date</th>
-                            <th>Action on {{$subscription->domain[0]->user_domain->url}}</th>
+                            <th>Action on {{$domain->user_domain->url}}</th>
                         </tr>
                         </thead>
                         <tbody>
-                        @foreach($subscription->feeds as $feeds)
-                            @foreach($feeds->feed->feed as $feed)
+                             @foreach($feeds as $feed)
                                 <tr>
                                     <td><p>{{$feed->title}}</p><i
                                                 class="text-success">{{$feed->datasources_feed->Datasource->url}}
@@ -68,8 +67,8 @@
                                     <td>
                                         <form class="form" method="post" action="{{url('user/update-blogger-domain')}}">
                                             {{csrf_field()}}
-                                            <input name="subscription" value="{{$subscription->id}}" type="hidden">
-                                            <input name="domain" value="{{$subscription->domain[0]->id}}" type="hidden">
+                                            <input name="subscription" value="{{$domain->subscription_id}}" type="hidden">
+                                            <input name="domain" value="{{$domain->id}}" type="hidden">
                                             <input name="feed" value="{{$feed->id}}" type="hidden">
                                             <p>
                                                 <button type="submit" id="button" class="btn btn-success" name="publish"
@@ -85,7 +84,6 @@
                                     </td>
                                 </tr>
                             @endforeach
-                        @endforeach
                         </tbody>
                     </table>
                 </div>
