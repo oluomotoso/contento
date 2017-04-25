@@ -58,12 +58,12 @@ Route::group(['middleware' => 'auth', 'prefix' => 'user'], function () {
         Route::post('/invoice', 'UserController@GetInvoice');
         Route::get('/invoice', 'UserController@GetInvoice');
         Route::post('/pay-online', 'UserController@BuyOnline');
+        Route::post('/buyonline', 'UserController@RedirectBuyOnline');
         Route::post('/manage-domains', 'UserController@ManageDomains');
         Route::get('/link-to-google', 'BloggerController@RedirectToGoogle');
         Route::get('/auth-google-data', 'BloggerController@UploadPhotoToPicasa');
         Route::get('/manage-domain/{id}/d/{d}', 'UserController@SubscriptionDomain');
         Route::post('/update-blogger-domain', 'BloggerController@PostSubscriptionDomain');
-
 
 
     });

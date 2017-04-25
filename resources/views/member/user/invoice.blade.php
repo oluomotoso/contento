@@ -55,34 +55,17 @@
                                                                 class="text-danger">PENDING PAYMENT</span>
                                                     </h4>
                                                     <br>
-                                                    <form method='POST' action='https://voguepay.com/pay/'>
-
-                                                        <input type='hidden' name='v_merchant_id' value='12143-300'/>
-                                                        <input type='hidden' name='merchant_ref'
-                                                               value="{{$subscription->transaction->id}}"/>
-                                                        <input type='hidden' name='memo'
-                                                               value="content subscription on contento.com.ng"/>
-
-                                                        <input type='hidden' name='notify_url'
-                                                               value="{{ url('/voguepay/notify') }}"/>
-                                                        <input type='hidden' name='success_url'
-                                                               value="{{ url('/voguepay/success') }}"/>
-                                                        <input type='hidden' name='fail_url'
-                                                               value="{{ url('/voguepay/failure') }}"/>
-
-                                                        <input type='hidden' name='developer_code'
-                                                               value='56fb6c9ed9764'/>
-                                                        <input type='hidden' name='store_id' value='405'/>
-                                                        <input type='hidden' name='total'
-                                                               value='{{$subscription->transaction->amount}}'/>
-
+                                                    <form method='POST' action="{{ url('/user/buyonline')}}">
                                                         <div class="form-group">
-                                                            <button type="submit" class="btn btn-primary">PAY ONLINE NOW
+                                                            {!! csrf_field() !!}
+                                                            <input class="form-control" type="hidden" name="transaction_id"
+                                                                   value="{{$subscription->transaction->id}}"
+                                                                   id="amount">
+                                                            <button type="submit" class="btn btn-primary">PROCEED TO
+                                                                MAKE PAYMENT
+                                                                ONLINE
                                                             </button>
-                                                            &nbsp;
-                                                            <span class="info">Use online payment for instant approval</span>
                                                         </div>
-
                                                     </form>
                                                     <br>
                                                     <h2 class="h2 m-none text-dark text-bold">OR</h2>

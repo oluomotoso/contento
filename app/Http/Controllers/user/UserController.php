@@ -10,6 +10,7 @@ use App\currency;
 use App\datasource_feed;
 use App\feed;
 use App\feed_category;
+use App\Notifications\ApprovedSubscriptionNotification;
 use App\Notifications\NotifySubscription;
 use App\Plan;
 use App\Published_feed;
@@ -24,24 +25,68 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Yabacon\Paystack;
 
 class UserController extends Controller
 {
     //
     public function index()
     {
-        $user = Auth::user();
-        $today = new \DateTime();
-        $content = feed::where('created_at', '>', $today->modify('-7 days'))->count();
-        $subscription = Subscription::where('status', true)->where('ends_at', '>', date("Y m d H:i:s"))->count();
-        $sub = Subscription::where('status', true)->where('user_id', $user->id)->select('id')->get();
-        $sub_array = [];
-        foreach ($sub as $item) {
-            $sub_array[] = $item->id;
+        if (isset($_GET['trxref']) || isset($_GET['reference'])) {
+            $reference = $_GET['reference'];
+            $paystack = new Paystack('sk_test_bfd640ea5e3ad1610c783b3f47b4a7079373c881');
+            try {
+                // verify using the library
+                $tranx = $paystack->transaction->verify([
+                    'reference' => $reference, // unique to transactions
+                ]);
+            } catch (\Yabacon\Paystack\Exception\ApiException $e) {
+                print_r($e->getResponseObject());
+                die($e->getMessage());
+            }
+
+            if ('success' == $tranx->data->status) {
+                $transaction = Transaction::find($reference);
+                if ($transaction->status == false) {
+                    $user = User::find($transaction->user_id);
+                    $subscription = Subscription::with(['transaction' => function ($query) {
+                        $query->where('status', false);
+                    }])->find($transaction->subscription_id);
+                    $plan = $subscription->plan;
+                    $approved = date('Y-m-d H:i:s');
+                    $time = strtotime($approved);
+                    $expiry = $time + ($plan->days * 24 * 60 * 60);
+                    $expiry_date = date('Y-m-d H:i:s', $expiry);
+                    DB::beginTransaction();
+                    $key = uniqid('', true);
+                    Subscription::where('id', $transaction->subscription_id)->update([
+                        'status' => true,
+                        'ends_at' => $expiry_date,
+                        'subscription_key' => $key
+                    ]);
+                    Transaction::where('id', $transaction->id)->where('subscription_id', $transaction->subscription_id)->update([
+                        'status' => true
+                    ]);
+                    DB::commit();
+                    $user->notify(new ApprovedSubscriptionNotification());
+                }
+                return redirect('/user/dashboard')->with('message', 'Your transaction was successfull & your subscription have been approved. Please enjoy your contento.');
+            }
+        } else {
+
+            $user = Auth::user();
+            $today = new \DateTime();
+            $content = feed::where('created_at', '>', $today->modify('-7 days'))->count();
+            $subscription = Subscription::where('status', true)->where('ends_at', '>', date("Y m d H:i:s"))->count();
+            $sub = Subscription::where('status', true)->where('user_id', $user->id)->select('id')->get();
+            $sub_array = [];
+            foreach ($sub as $item) {
+                $sub_array[] = $item->id;
+            }
+            $published = Published_feed::whereIn('subscription_id', $sub_array)->count();
+            $domain = User_domain::where('user_id', $user->id)->count();
+            return view('member.user.dashboard', ['content' => $content, 'subscription' => $subscription, 'published' => $published, 'domain' => $domain]);
         }
-        $published = Published_feed::whereIn('subscription_id', $sub_array)->count();
-        $domain = User_domain::where('user_id', $user->id)->count();
-        return view('member.user.dashboard', ['content' => $content, 'subscription' => $subscription, 'published' => $published, 'domain' => $domain]);
     }
 
     public function Pricing()
@@ -70,6 +115,13 @@ class UserController extends Controller
         } else {
             return redirect('/user/user-settings')->withErrors('You must update your profile to continue');
         }
+    }
+
+    public
+    function RedirectBuyOnline(Request $request)
+    {
+        $contento = new contento();
+        return redirect()->away($contento->RedirectPaystack($request));
     }
 
     public function CreateSubscriptionByCategory()

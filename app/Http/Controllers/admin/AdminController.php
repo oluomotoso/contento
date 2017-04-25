@@ -7,6 +7,7 @@ use App\currency;
 use App\datasource;
 use App\datasource_feed;
 use App\Jobs\FindFeeds;
+use App\Notifications\ApprovedSubscriptionNotification;
 use App\Plan;
 use App\Subscription;
 use App\Transaction;
@@ -186,6 +187,7 @@ class AdminController extends Controller
         $expiry = $time + ($plan->days * 24 * 60 * 60);
         $expiry_date = date('Y-m-d H:i:s', $expiry);
         DB::beginTransaction();
+        $user = $subscription->user;
         $key = uniqid('', true);
         Subscription::where('id', $request->subscription)->update([
             'status' => true,
@@ -196,6 +198,7 @@ class AdminController extends Controller
             'status' => true
         ]);
         DB::commit();
+        $user->notify(new ApprovedSubscriptionNotification());
 
         return redirect($request->path())->with('message', 'Subscription have been approved successfully');
 
