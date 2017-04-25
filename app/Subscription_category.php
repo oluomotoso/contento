@@ -13,4 +13,5 @@ class Subscription_category extends Model
     {
         return $this->belongsTo('App\category','category_id');
     }
+
 }

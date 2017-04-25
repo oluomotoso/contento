@@ -337,14 +337,29 @@ class UserController extends Controller
     {
         $user = Auth::user();
         //$domain = User_domain::where('url', $domain)->where('user_id', $user->id)->first();
-        $subscription = Subscription::with(['domain' => function ($query) use ($d, $sub) {
-            $query->where('id', $d);
-        }, 'feeds.feed.feed.published' => function ($query2) use ($d, $sub) {
-            $query2->where('subscription_id', $sub)->where('domain_id', $d);
-        }])->find($sub);
-        if ($subscription->user_id !== $user->id) {
+        $subre = Subscription::find($sub);
+        if ($subre->user_id !== $user->id) {
             return redirect('user/manage-subscriptions');
         }
+        if ($subre->is_category == false) {
+            $subscription = Subscription::with(['domain' => function ($query) use ($d, $sub) {
+                $query->where('id', $d);
+            }, 'feeds.feed.feed' => function ($query2) use ($d, $sub) {
+                $query2->limit(200);
+            }, 'feeds.feed.feed.published' => function ($query2) use ($d, $sub) {
+                $query2->where('subscription_id', $sub)->where('domain_id', $d);
+            }])->find($sub);
+
+        } else {
+            $subscription = Subscription::with(['domain' => function ($query) use ($d, $sub) {
+                $query->where('id', $d);
+            }, 'category_feeds.category.feed_category.feed' => function ($query2) use ($d, $sub) {
+                $query2->limit(200);
+            }, 'category_feeds.category.feed_category.feed.published' => function ($query2) use ($d, $sub) {
+                $query2->where('subscription_id', $sub)->where('domain_id', $d);
+            }])->find($sub);
+        }
+
         if (date("Y m d H:i:s") > $subscription->ends_at) {
             return redirect('user/manage-subscriptions')->withErrors('Your subscription has expired, please renew.');
         }

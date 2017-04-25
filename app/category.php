@@ -14,10 +14,6 @@ class category extends Model
         return $this->hasMany('App\feed_category');
     }
 
-    public function Feed()
-    {
-        return $this->hasManyThrough('App\feed', 'App\feed_category');
-    }
 
     public function FeedCount()
     {
