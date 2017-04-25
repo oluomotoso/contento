@@ -48,10 +48,10 @@ class UserController extends Controller
             if ('success' == $tranx->data->status) {
                 $transaction = Transaction::find($reference);
                 if ($transaction->status == false) {
-                    $user = User::find($transaction->user_id);
-                    $subscription = Subscription::with(['transaction' => function ($query) {
+                     $subscription = Subscription::with(['transaction' => function ($query) {
                         $query->where('status', false);
                     }])->find($transaction->subscription_id);
+                    $user = User::find($subscription->user_id);
                     $plan = $subscription->plan;
                     $approved = date('Y-m-d H:i:s');
                     $time = strtotime($approved);
