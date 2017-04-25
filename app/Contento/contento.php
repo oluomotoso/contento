@@ -260,7 +260,7 @@ class contento
     {
         $user = Auth::user();
         $transaction = Transaction::find($request->transaction_id);
-        $paystack = new Paystack('sk_test_bfd640ea5e3ad1610c783b3f47b4a7079373c881');
+        $paystack = new Paystack('sk_live_c2d255cc67c52aa77462d5085881a1be05273f42');
         $amount = $transaction->amount * 100;
         try {
             $tranx = $paystack->transaction->initialize([

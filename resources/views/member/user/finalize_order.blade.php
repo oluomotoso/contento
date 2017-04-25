@@ -49,7 +49,7 @@
                                         <div class="form-group">
                                             <label>Subscribed Links</label>
                                             <textarea readonly class="form-control" rows="5"
-                                                      cols="2">@foreach($sources as $source){{$source->datasource->url.','}}@endforeach</textarea>
+                                                      cols="2">@foreach($sources as $source) @if($is_category == 0){{$source->datasource->url.','}}@else{{$source->category.','}}@endif @endforeach</textarea>
                                             @foreach($feeds as $feed)
                                                 <input name="feeds[]" type="hidden" value="{{$feed}}">
                                             @endforeach
@@ -60,6 +60,8 @@
                                             <input class="form-control"
                                                    value="{{$domain_number}}" readonly name="allowed_domains">
                                         </div>
+                                        <input value="{{$is_category}}" name="is_category" hidden>
+
                                         <div class="form-group">
                                             <label>Plan</label>
                                             <select name="plan" class="form-control" readonly>

@@ -58,7 +58,8 @@
                                                     <form method='POST' action="{{ url('/user/buyonline')}}">
                                                         <div class="form-group">
                                                             {!! csrf_field() !!}
-                                                            <input class="form-control" type="hidden" name="transaction_id"
+                                                            <input class="form-control" type="hidden"
+                                                                   name="transaction_id"
                                                                    value="{{$subscription->transaction->id}}"
                                                                    id="amount">
                                                             <button type="submit" class="btn btn-primary">PROCEED TO
@@ -126,9 +127,21 @@
                                             <tbody>
                                             <tr>
                                                 <td class="text-semibold text-dark">Contents
-                                                    from @foreach($subscription->feeds as $feed)
-                                                        <h6>{{$feed->feed->datasource->name}}</h6>
-                                                    @endforeach</td>
+                                                    from
+                                                    @if($subscription->is_category == 1)
+                                                        @foreach($subscription->category_feeds as $feed)
+
+                                                        <h6>{{$feed->category->category}}</h6>
+                                                        @endforeach
+                                                    @else
+                                                    @foreach($subscription->feeds as $feed)
+
+                                                            <h6>{{$feed->feed->datasource->url}}</h6>
+
+                                                    @endforeach
+                                                    @endif
+                                                </td>
+
                                                 <td class="text-center">{{$subscription->transaction->actual_cost.' '.country($subscription->transaction->currency->country)->getCurrency()['iso_4217_code']}}</td>
                                                 <td class="text-center">{{$subscription->plan->month}}</td>
                                                 <td class="text-center text-success">

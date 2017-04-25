@@ -80,6 +80,7 @@
                                     <input class="form-control" placeholder="Name of Subscription"
                                            value="{{old('name')}}" name="name">
                                 </div>
+                                <input value="0" name="is_category" hidden>
 
                                 <div class="form-group">
                                     <div class="form-group">

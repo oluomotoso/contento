@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Subscription extends Model
 {
-    protected $fillable = ['user_id', 'name', 'subscription_key', 'plan_id', 'trial_ends_at', 'ends_at','status','number_of_domains'];
+    protected $fillable = ['user_id', 'name', 'subscription_key', 'plan_id', 'trial_ends_at', 'ends_at','status','number_of_domains','is_category'];
 
     protected $dates = [
         'created_at',
@@ -17,6 +17,10 @@ class Subscription extends Model
     public function feeds()
     {
         return $this->hasMany('App\Subscription_feed', 'subscription_id');
+    }
+    public function category_feeds()
+    {
+        return $this->hasMany('App\Subscription_category', 'subscription_id');
     }
 
     public function transaction()

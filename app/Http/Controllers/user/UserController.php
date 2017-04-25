@@ -15,6 +15,7 @@ use App\Notifications\NotifySubscription;
 use App\Plan;
 use App\Published_feed;
 use App\Subscription;
+use App\Subscription_category;
 use App\Subscription_domain;
 use App\Subscription_feed;
 use App\Transaction;
@@ -34,7 +35,7 @@ class UserController extends Controller
     {
         if (isset($_GET['trxref']) || isset($_GET['reference'])) {
             $reference = $_GET['reference'];
-            $paystack = new Paystack('sk_test_bfd640ea5e3ad1610c783b3f47b4a7079373c881');
+            $paystack = new Paystack('sk_live_c2d255cc67c52aa77462d5085881a1be05273f42');
             try {
                 // verify using the library
                 $tranx = $paystack->transaction->verify([
@@ -48,7 +49,7 @@ class UserController extends Controller
             if ('success' == $tranx->data->status) {
                 $transaction = Transaction::find($reference);
                 if ($transaction->status == false) {
-                     $subscription = Subscription::with(['transaction' => function ($query) {
+                    $subscription = Subscription::with(['transaction' => function ($query) {
                         $query->where('status', false);
                     }])->find($transaction->subscription_id);
                     $user = User::find($subscription->user_id);
@@ -178,9 +179,20 @@ class UserController extends Controller
         $currency = $profile->currency;
         $feeds = $request->id;
         $cost = '';
-        foreach ($feeds as $feed) {
-            $datasource_feed = datasource_feed::find($feed);
-            $cost += $datasource_feed->cost;
+        if ($request->is_category == 1) {
+            foreach ($feeds as $feed) {
+                $category_feed = category::find($feed);
+                $cost += $category_feed->cost;
+
+            }
+            $sources = category::find($feeds);
+        } else {
+            foreach ($feeds as $feed) {
+                $datasource_feed = datasource_feed::find($feed);
+                $cost += $datasource_feed->cost;
+
+            }
+            $sources = datasource_feed::find($feeds);
         }
         $cost = $cost * $currency->rate_to_usd;
         $plan = Plan::find($request->duration);
@@ -193,9 +205,9 @@ class UserController extends Controller
         $final_cost = $pricing->DiscountforDomain($request->number_of_domain) * $discounted_cost_for_duration * $request->number_of_domain;
         $actual_cost = $cost * $plan->month * $request->number_of_domain;
         $discount = (($actual_cost - $final_cost) / $actual_cost) * 100;
-        $sources = datasource_feed::find($feeds);
+
         $currency_code = country($currency->country)->getCurrency()['iso_4217_code'];
-        return view('member.user.finalize_order', ['actual_cost' => $actual_cost, 'final_cost' => $final_cost, 'sources' => $sources, 'feeds' => $feeds, 'currency' => $currency->id, 'total_discount' => $discount, 'subscription_name' => $request->name, 'domain_number' => $request->number_of_domain, 'currency_code' => $currency_code, 'plan' => $plan]);
+        return view('member.user.finalize_order', ['actual_cost' => $actual_cost, 'final_cost' => $final_cost, 'sources' => $sources, 'feeds' => $feeds, 'currency' => $currency->id, 'total_discount' => $discount, 'subscription_name' => $request->name, 'domain_number' => $request->number_of_domain, 'currency_code' => $currency_code, 'plan' => $plan, 'is_category' => $request->is_category]);
 
 
     }
@@ -219,14 +231,25 @@ class UserController extends Controller
             'name' => $request->subscription_name,
             'user_id' => $user->id,
             'plan_id' => $request->plan,
-            'number_of_domains' => $request->allowed_domains
+            'number_of_domains' => $request->allowed_domains,
+            'is_category' => $request->is_category
         ]);
-        foreach ($feeds as $feed) {
-            Subscription_feed::create([
-                'feed_id' => $feed,
-                'subscription_id' => $subscription->id
-            ]);
+        if ($request->is_category == 1) {
+            foreach ($feeds as $feed) {
+                Subscription_category::create([
+                    'category_id' => $feed,
+                    'subscription_id' => $subscription->id
+                ]);
+            }
+        } else {
+            foreach ($feeds as $feed) {
+                Subscription_feed::create([
+                    'feed_id' => $feed,
+                    'subscription_id' => $subscription->id
+                ]);
+            }
         }
+
         Transaction::create([
             'subscription_id' => $subscription->id,
             'amount' => $request->final_cost,
@@ -245,9 +268,18 @@ class UserController extends Controller
     public function GetInvoice(Request $request)
     {
         if (isset($request->subscription)) {
-            $sub = Subscription::with(['feeds.feed.Datasource', 'transaction' => function ($query) {
-                $query->where('status', false);
-            }, 'transaction.currency', 'plan'])->find($request->subscription);
+            $subscription = Subscription::find($request->subscription);
+            if ($subscription->is_category == true) {
+                $sub = Subscription::with(['category_feeds.category', 'transaction' => function ($query) {
+                    $query->where('status', false);
+                }, 'transaction.currency', 'plan'])->find($request->subscription);
+
+            } else {
+                $sub = Subscription::with(['feeds.feed.Datasource', 'category_feeds.category', 'transaction' => function ($query) {
+                    $query->where('status', false);
+                }, 'transaction.currency', 'plan'])->find($request->subscription);
+
+            }
             return view('member.user.invoice', ['subscription' => $sub]);
         } else {
             return redirect('/user/subscriptions')->with('message', 'please select subscription below or add a new subscription');
