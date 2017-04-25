@@ -85,7 +85,7 @@ class UserController extends Controller
                 }
 
                 $ContentoRequest = new \App\Contento\Request();
-                return $ContentoRequest->SubscriptionFeeds($sub, $subscription, $url);
+                return $ContentoRequest->SubscriptionFeeds($sub, $subscription, $url,200);
             }
             return response('Invalid request', 403);
         }
@@ -112,14 +112,8 @@ class UserController extends Controller
                     return response('Your subsciption have expired, please renew', 402);
                 }
 
-                $published = Published_feed::where('subscription_id', $sub)->where('domain_id', $url)->select('feed_id')->get();
-                $published_feed_array = [];
-                foreach ($published as $value) {
-                    $published_feed_array[] = $value->feed_id;
-                }
-                $today = new \DateTime();
-                $feeds = feed::with('datasources_feed.Datasource')->select('id', 'description', 'title', 'link', 'updated_at', 'datasource_feed_id', 'content')->where('created_at', '>', $today->modify('-1 days'))->whereIn('datasource_feed_id', $source)->whereNotIn('id', $published_feed_array)->orderBy('updated_at', 'desc')->limit(10)->get();
-                return $feeds;
+                $ContentoRequest = new \App\Contento\Request();
+                return $ContentoRequest->SubscriptionFeeds($sub, $subscription, $url,20);
             }
             return response('Invalid request', 403);
         }

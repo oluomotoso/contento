@@ -58,7 +58,7 @@
                                 </ul>
                             </div>
                         @endif
-                        <label>Username</label>
+                        <label>Email Address</label>
                         <div class="input-group input-group-icon">
                             <input id="email" type="email" class="form-control input-lg" name="email"
                                    value="{{ old('email') }}">

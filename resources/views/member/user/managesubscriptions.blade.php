@@ -63,42 +63,36 @@
                                                 <button type="submit" id="button" class="btn btn-default">Add Domain
                                                 </button>
                                             </form>
-                                        @elseif(count($subscription->domain)== count($subscription->number_of_domains))
+                                        @elseif(count($subscription->domain)== $subscription->number_of_domains)
                                             <p>Maximum ({{$subscription->number_of_domains}}) domains added</p>
-                                            <!--form class="form" method="post" action="{{url('user/manage-domains')}}">
+                                        <!--form class="form" method="post" action="{{url('user/manage-domains')}}">
                                                 {{csrf_field()}}
                                                 <label>
                                                     <select name="domain" class="form-control">
                                                         @foreach($subscription->domain as $domain)
-                                                            <option value="{{$domain->id}}">{{$domain->user_domain->url}}</option>
+                                            <option value="{{$domain->id}}">{{$domain->user_domain->url}}</option>
                                                         @endforeach
-                                                    </select>
-                                                </label>
+                                                </select>
+                                            </label>
 
-                                                <input name="subscription" value="{{$subscription->id}}" type="hidden">
+                                            <input name="subscription" value="{{$subscription->id}}" type="hidden">
                                                 <button type="submit" id="button" class="btn btn-default"
                                                         name="manage_domain">Manage Domain
                                                 </button>
                                             </form-->
                                             @foreach($subscription->domain as $domain)
-                                                <p><a href="{{url('user/manage-domain/'.$subscription->id.'/d/'.$domain->id)}}">{{$domain->user_domain->url}}</a></p>
+                                                <p>
+                                                    <a href="{{url('user/manage-domain/'.$subscription->id.'/d/'.$domain->id)}}">{{$domain->user_domain->url}}</a>
+                                                </p>
                                             @endforeach
-                                        @elseif(count($subscription->domain)< count($subscription->number_of_domains))
-                                            <p>({{$subscription->number_of_domains}}) domains added</p>
-                                            <form class="form" method="post" action="{{url('user/manage-domains')}}">
-                                                {{csrf_field()}}
-                                                <label>
-                                                    <select name="domain" class="form-control">
-                                                        @foreach($subscription->domain as $domain)
-                                                            <option value="{{$domain->id}}">{{$domain->url}}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </label>
-                                                <input name="subscription" value="{{$subscription->id}}" type="hidden">
-                                                <button type="submit" id="button" class="btn btn-default"
-                                                        name="manage_subscription">Manage Domain
-                                                </button>
-                                            </form>
+                                        @elseif(count($subscription->domain)< $subscription->number_of_domains)
+                                            <p>({{count($subscription->domain)}}) domains added</p>
+                                            @foreach($subscription->domain as $domain)
+                                                <p>
+                                                    <a href="{{url('user/manage-domain/'.$subscription->id.'/d/'.$domain->id)}}">{{$domain->user_domain->url}}</a>
+                                                </p>
+                                            @endforeach
+
                                             <form class="form" method="post" action="{{url('user/manage-domains')}}">
                                                 {{csrf_field()}}
                                                 <input name="subscription" value="{{$subscription->id}}" type="hidden">

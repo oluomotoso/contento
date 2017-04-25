@@ -351,7 +351,7 @@ class UserController extends Controller
             return redirect('user/manage-subscriptions')->withErrors('Your subscription has expired, please renew.');
         }
         $ContentoRequest = new \App\Contento\Request();
-        $feeds = $ContentoRequest->SubscriptionFeeds($sub, $subre, $d);
+        $feeds = $ContentoRequest->SubscriptionFeeds($sub, $subre, $d,200);
         return view('member.user.managedomain', ['feeds' => $feeds, 'domain' => $domain]);
     }
 

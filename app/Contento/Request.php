@@ -17,7 +17,7 @@ use App\Subscription_feed;
 
 class Request
 {
-    public function SubscriptionFeeds($sub, $subscription, $url)
+    public function SubscriptionFeeds($sub, $subscription, $url,$limit)
     {
         $published = Published_feed::where('subscription_id', $sub)->where('domain_id', $url)->select('feed_id')->get();
         $published_feed_array = [];
@@ -31,19 +31,19 @@ class Request
                 $subscription_feed_array[] = $item->feed_id;
             }
 
-            $feeds = feed::with('datasources_feed.Datasource')->select('id', 'description', 'title', 'link', 'updated_at', 'datasource_feed_id')->whereIn('datasource_feed_id', $subscription_feed_array)->whereNotIn('id', $published_feed_array)->orderBy('updated_at', 'desc')->limit(200)->get();
+            $feeds = feed::with('datasources_feed.Datasource')->select('id', 'description', 'title', 'link', 'updated_at', 'datasource_feed_id')->whereIn('datasource_feed_id', $subscription_feed_array)->whereNotIn('id', $published_feed_array)->orderBy('updated_at', 'desc')->limit($limit)->get();
         } else {
             $subscription_feed = Subscription_category::where('subscription_id', $subscription->id)->select('category_id')->get();
             $subscription_feed_array = [];
             foreach ($subscription_feed as $item) {
                 $subscription_feed_array[] = $item->feed_id;
             }
-            $feed_category = feed_category::whereIn('category_id', $subscription_feed_array)->whereNotIn($published_feed_array)->orderBy('id', 'desc')->groupBy('feed_id')->limit(200)->get();
+            $feed_category = feed_category::whereIn('category_id', $subscription_feed_array)->whereNotIn($published_feed_array)->orderBy('id', 'desc')->groupBy('feed_id')->limit($limit)->get();
             $feedscat = [];
             foreach ($feed_category as $item) {
                 $feedscat[] = $item->feed_id;
             }
-            $feeds = feed::with('datasources_feed.Datasource')->select('id', 'description', 'title', 'link', 'updated_at', 'datasource_feed_id')->whereIn('id', $feedscat)->orderBy('updated_at', 'desc')->limit(200)->get();
+            $feeds = feed::with('datasources_feed.Datasource')->select('id', 'description', 'title', 'link', 'updated_at', 'datasource_feed_id')->whereIn('id', $feedscat)->orderBy('updated_at', 'desc')->limit($limit)->get();
 
         }
         return $feeds;
