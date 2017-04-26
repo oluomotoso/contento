@@ -35,6 +35,7 @@ class RegisterController extends Controller
      *
      * @return void
      */
+    protected $redirectTo = '/user/dashboard';
     public function __construct()
     {
         $this->middleware('guest');
