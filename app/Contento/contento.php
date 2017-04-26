@@ -7,6 +7,7 @@ use App\feed;
 use App\feed_category;
 use App\Notifications\ApprovedSubscriptionNotification;
 use App\Notifications\NotifySubscription;
+use App\Plan;
 use App\Publishing_parameter;
 use App\Subscription;
 use App\Subscription_category;
@@ -286,14 +287,21 @@ class contento
 
     public function GiftFreeSubscription($user)
     {
-
+        $plan = Plan::find(3);
+        $approved = date('Y-m-d H:i:s');
+        $time = strtotime($approved);
+        $expiry = $time + ($plan->days * 24 * 60 * 60);
+        $expiry_date = date('Y-m-d H:i:s', $expiry);
+        $key = uniqid('', true);
         $subscription = Subscription::create([
             'name' => 'FREE TRIAL',
             'user_id' => $user->id,
             'plan_id' => 3,
             'number_of_domains' => 1,
             'is_category' => true,
-            'status' => true
+            'status' => true,
+            'ends_at' => $expiry_date,
+            'subscription_key' => $key
         ]);
         $feeds = [10, 7, 4, 2, 14, 21, 25, 3];
         foreach ($feeds as $feed) {
