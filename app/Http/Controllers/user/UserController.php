@@ -78,7 +78,7 @@ class UserController extends Controller
             $user = Auth::user();
             $today = new \DateTime();
             $content = feed::where('created_at', '>', $today->modify('-7 days'))->count();
-            $subscription = Subscription::where('status', true)->where('ends_at', '>', date("Y m d H:i:s"))->count();
+            $subscription = Subscription::where('status', true)->where('user_id', $user->id)->where('ends_at', '>', date("Y m d H:i:s"))->count();
             $sub = Subscription::where('status', true)->where('user_id', $user->id)->select('id')->get();
             $sub_array = [];
             foreach ($sub as $item) {
