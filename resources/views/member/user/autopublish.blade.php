@@ -46,12 +46,19 @@
 
 
                                     <div class="form-group">
-                                        @if($publish[$i]->publish_all == true)
-                                            <label><input type="checkbox" name="publish[]" checked>Publish all posts
-                                                automatically</label>
+                                        @if(count($publish)>0)
+
+                                            @if($publish[$i]->publish_all == true)
+                                                <label><input type="checkbox" name="publish[]" checked>Publish all posts
+                                                    automatically</label>
+                                            @else
+                                                <label><input type="checkbox" name="publish[]">Publish all posts
+                                                    automatically</label>
+                                            @endif
                                         @else
                                             <label><input type="checkbox" name="publish[]">Publish all posts
                                                 automatically</label>
+
                                         @endif
                                     </div>
 
@@ -61,11 +68,15 @@
                                             not
                                             type anything here if you marked publish all</label>
                                         <textarea class="form-control"
-                                                  name="keywords[]">{{$publish[$i]->parameters}}</textarea>
+                                                  name="keywords[]">@if(count($publish)>0){{$publish[$i]->parameters}}@endif</textarea>
                                     </div>
                                     <div class="form-group">
-                                        @if($publish[$i]->to_draft == true)
-                                            <label><input type="checkbox" name="is_draft[]" checked>Publish as Draft</label>
+                                        @if(count($publish)>0)
+                                            @if($publish[$i]->to_draft == true)
+                                                <label><input type="checkbox" name="is_draft[]" checked>Publish as Draft</label>
+                                            @else
+                                                <label><input type="checkbox" name="is_draft[]">Publish as Draft</label>
+                                            @endif
                                         @else
                                             <label><input type="checkbox" name="is_draft[]">Publish as Draft</label>
                                         @endif
@@ -82,9 +93,14 @@
 
                                     </div>
                                     <div class="form-group">
-                                        @if($publish[$i]->publish_all == true)
-                                            <label><input type="checkbox" name="publish[]" checked>Publish all posts
-                                                automatically</label>
+                                        @if(count($publish)>0)
+                                            @if($publish[$i]->publish_all == true)
+                                                <label><input type="checkbox" name="publish[]" checked>Publish all posts
+                                                    automatically</label>
+                                            @else
+                                                <label><input type="checkbox" name="publish[]">Publish all posts
+                                                    automatically</label>
+                                            @endif
                                         @else
                                             <label><input type="checkbox" name="publish[]">Publish all posts
                                                 automatically</label>
@@ -96,12 +112,16 @@
                                             not
                                             type anything here if you marked publish all</label>
                                         <textarea class="form-control"
-                                                  name="keywords[]">{{$publish[$i]->parameters}}</textarea>
+                                                  name="keywords[]">@if(count($publish)>0){{$publish[$i]->parameters}}@endif</textarea>
                                     </div>
                                     {{csrf_field()}}
                                     <div class="form-group">
-                                        @if($publish[$i]->to_draft == true)
-                                            <label><input type="checkbox" name="is_draft[]" checked>Publish as Draft</label>
+                                        @if(count($publish)>0)
+                                            @if($publish[$i]->to_draft == true)
+                                                <label><input type="checkbox" name="is_draft[]" checked>Publish as Draft</label>
+                                            @else
+                                                <label><input type="checkbox" name="is_draft[]">Publish as Draft</label>
+                                            @endif
                                         @else
                                             <label><input type="checkbox" name="is_draft[]">Publish as Draft</label>
                                         @endif
