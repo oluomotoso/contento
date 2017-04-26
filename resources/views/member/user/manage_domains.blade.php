@@ -37,6 +37,13 @@
                             <div class="row">
                                 @if($type == 1)
                                     <div class="panel-heading">
+                                        <h3 class="panel-title text-center">Manage Wordpress</h3>
+
+                                        <p class="text-success text-center">To add a wordpress site, Please download our <a href="https://wordpress.org/plugins/the-contento/">Wordpress Plugin</a> and follow the installation procedures</p>
+                                        
+
+                                    </div>
+                                    <!--div class="panel-heading">
                                         <h3 class="panel-title text-center">Manage Domains</h3>
                                         <p class="info text-center">Kindly note that a domain cannot be removed or
                                             edited after
@@ -73,7 +80,7 @@
                                             Submit
                                             Button
                                         </button>
-                                    </form>
+                                    </form-->
 
 
                                 @elseif($type ==2)
