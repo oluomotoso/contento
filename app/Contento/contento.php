@@ -218,8 +218,7 @@ class contento
                 $cat = category::firstOrCreate([
                     'category' => $cate
                 ]);
-
-
+                category::find($cat->id)->touch();
                 feed_category::firstOrCreate([
                     'feed_id' => $feed->id,
                     'category_id' => $cat->id]);
@@ -294,7 +293,7 @@ class contento
             'is_category' => true,
             'status' => true
         ]);
-        $feeds = [10, 7, 4, 2, 14, 21, 25];
+        $feeds = [10, 7, 4, 2, 14, 21, 25,3];
         foreach ($feeds as $feed) {
             Subscription_category::create([
                 'category_id' => $feed,
