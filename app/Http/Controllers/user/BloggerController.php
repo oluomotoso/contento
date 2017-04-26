@@ -8,7 +8,11 @@ use App\Jobs\BloggerAction;
 use App\Jobs\UpdateBlogListForUser;
 use App\Picasaphoto;
 use App\Published_feed;
+use App\Publishing_parameter;
+use App\Subscription;
+use App\Subscription_category;
 use App\Subscription_domain;
+use App\Subscription_feed;
 use App\User_domain;
 use Doctrine\Common\Cache\ArrayCache;
 use GuzzleHttp\Client;
@@ -133,5 +137,48 @@ class BloggerController extends Controller
 
     }
 
+    public function ManageBloggerAutopublish(Request $request)
+    {
+        $subscription = Subscription::with(['domain' => function ($query) use ($request) {
+            $query->where('id', $request->domain);
+        }])->find($request->subscription);
+        if ($subscription->is_category == true) {
+            $parameters = Subscription_category::where('subscription_id', $subscription->id)->get();
+        } else {
+            $parameters = Subscription_feed::where('subscription_id', $subscription->id)->get();
+        }
+        $publish = Publishing_parameter::where('subscription_domain_id', $request->domain)->get();
+        return view('member.user.autopublish', ['parameters' => $parameters, 'domain' => $request->domain, 'subscription' => $subscription, 'publish' => $publish]);
+    }
 
+    public function UpdateAutopublishParameters(Request $request)
+    {
+        $subscription = Subscription::with(['domain' => function ($query) use ($request) {
+            $query->where('id', $request->domain);
+        }])->find($request->subscription);
+        if ($subscription->is_category == true) {
+            $parameters = Subscription_category::where('subscription_id', $subscription->id)->get();
+        } else {
+            $parameters = Subscription_feed::where('subscription_id', $subscription->id)->get();
+        }
+        for ($i = 0; $i < count($parameters); $i++) {
+             if (isset($request->publish[$i])) {
+                $parameter = null;
+                $publish = true;
+            } else {
+                 $publish = false;
+                 $parameter = $request->keywords[$i];
+
+            }
+            $identifier = $request->identifier [$i];
+            if (isset($request->is_draft[$i])) {
+                $draft = true;
+            } else {
+                $draft = false;
+            }
+            Publishing_parameter::updateOrCreate(['subscription_domain_id' => $request->domain, 'identifier_id' => $identifier], ['parameters' => $parameter, 'to_draft' => $draft, 'publish_all' => $publish]);
+
+        }
+        return redirect('user/manage-subscriptions')->with('message', 'Autopublishing parameters has been updated sucessfully');
+    }
 }

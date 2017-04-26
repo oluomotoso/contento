@@ -16,6 +16,18 @@
                 <li><a href="{{url('/admin/dashboard')}}">Dashboard</a></li>
                 <li class="active">Manage Subscriptions</li>
             </ol>
+            <ol class="breadcrumb">
+                <form class="form" method="post" action="{{url('user/manage-auto-publish')}}">
+                    {{csrf_field()}}
+                    <input name="subscription" value="{{$domain->subscription_id}}" type="hidden">
+                    <input name="domain" value="{{$domain->id}}" type="hidden">
+
+                        <button type="submit" id="button" class="btn btn-primary">Manage Auto-Publishing
+                            for {{$domain->user_domain->url}}
+                        </button>
+
+                </form>
+            </ol>
         </div>
         <div class="page-content">
             <div class="row center-block">

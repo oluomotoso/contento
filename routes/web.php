@@ -65,6 +65,8 @@ Route::group(['middleware' => 'auth', 'prefix' => 'user'], function () {
         Route::get('/auth-google-data', 'BloggerController@UploadPhotoToPicasa');
         Route::get('/manage-domain/{id}/d/{d}', 'UserController@SubscriptionDomain');
         Route::post('/update-blogger-domain', 'BloggerController@PostSubscriptionDomain');
+        Route::post('/manage-auto-publish', 'BloggerController@ManageBloggerAutopublish');
+        Route::post('/update-autopublish', 'BloggerController@UpdateAutopublishParameters');
 
 
     });
