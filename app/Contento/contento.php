@@ -7,6 +7,7 @@ use App\feed;
 use App\feed_category;
 use App\Notifications\ApprovedSubscriptionNotification;
 use App\Notifications\NotifySubscription;
+use App\Publishing_parameter;
 use App\Subscription;
 use App\Subscription_category;
 use App\Transaction;
@@ -293,7 +294,7 @@ class contento
             'is_category' => true,
             'status' => true
         ]);
-        $feeds = [10, 7, 4, 2, 14, 21, 25,3];
+        $feeds = [10, 7, 4, 2, 14, 21, 25, 3];
         foreach ($feeds as $feed) {
             Subscription_category::create([
                 'category_id' => $feed,
@@ -313,4 +314,6 @@ class contento
         DB::commit();
         $user->notify(new ApprovedSubscriptionNotification('FREE TRIAL'));
     }
+
+
 }

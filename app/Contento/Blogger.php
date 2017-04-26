@@ -10,15 +10,18 @@ namespace App\Contento;
 
 
 use App\feed;
+use App\Jobs\BloggerAction;
 use App\Picasaphoto;
+use App\Publishing_parameter;
 use App\Subscription_domain;
 use App\User_domain;
+use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class Blogger
 {
-
+    use DispatchesJobs;
     protected $client;
 
     public function __construct()
@@ -135,5 +138,43 @@ class Blogger
 
 
         }
+    }
+
+    public function AutoPublish() //Handles blogger autopublishing by iteration and pushing to queue
+    {
+        $parameters = Publishing_parameter::where('parameters', '!=', null)->orWhere('publish_all', '!=', false)->orderBy('updated_at', 'asc')->limit(10)->get();
+        foreach ($parameters as $parameter) {
+            $contentoRequest = new \App\Contento\Request();
+            $feeds = $contentoRequest->SubscriptionFeedsWithinHour($parameter->subscription_domain->subscription_id, $parameter->subscription_domain->subscription, $parameter->subscription_domain_id, 100, $parameter->identifier_id);
+            foreach ($feeds as $feed) {
+                if ($parameter->publish_all == true) {
+                    if ($parameter->is_draft == true) {
+                        $this->dispatch(new BloggerAction($feed->id, $parameter->subscription_domain_id, 2));
+                    } else {
+                        $this->dispatch(new BloggerAction($feed->id, $parameter->subscription_domain_id, 1));
+                    }
+                } else {
+                    $params = explode(',', $parameter->parameters);
+                    $params = array_unique($params);
+                    $params = array_filter($params);
+                    $params = array_values($params);
+                    $params = array_map('trim', $params);
+                    foreach ($params as $param) {
+                        if ($param !== null) {
+                            if (stripos($feeds->title, $param) !== false) {
+                                if ($parameter->is_draft == true) {
+                                    $this->dispatch(new BloggerAction($feed->id, $parameter->subscription_domain_id, 2));
+                                } else {
+                                    $this->dispatch(new BloggerAction($feed->id, $parameter->subscription_domain_id, 1));
+                                }
+                            }
+                        }
+                    }
+
+                }
+            }
+            Publishing_parameter::where('id', $parameter->id)->touch();
+        }
+        return 'done';
     }
 }
