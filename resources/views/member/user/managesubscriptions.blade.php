@@ -89,7 +89,7 @@
                                             <p>({{count($subscription->domain)}}) domains added</p>
                                             @foreach($subscription->domain as $domain)
                                                 <p>
-                                                    <a href="{{url('user/manage-domain/'.$subscription->id.'/d/'.$domain->id)}}">{{$domain->user_domain->url}}</a>
+                                                    <a href="{{url('user/manage-domain/'.$subscription->id.'/d/'.$domain->user_domain_id)}}">{{$domain->user_domain->url}}</a>
                                                 </p>
                                             @endforeach
 
