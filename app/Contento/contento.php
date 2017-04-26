@@ -13,6 +13,7 @@ use App\Subscription_category;
 use App\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use PicoFeed\Config\Config;
 use PicoFeed\PicoFeedException;
 use PicoFeed\Reader\Reader;
@@ -311,7 +312,6 @@ class contento
             'status' => true
 
         ]);
-        DB::commit();
         $user->notify(new ApprovedSubscriptionNotification('FREE TRIAL'));
     }
 
