@@ -5,6 +5,10 @@ use App\category;
 use App\datasource_feed;
 use App\feed;
 use App\feed_category;
+use App\Notifications\ApprovedSubscriptionNotification;
+use App\Notifications\NotifySubscription;
+use App\Subscription;
+use App\Subscription_category;
 use App\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -279,5 +283,35 @@ class contento
         return $tranx->data->authorization_url;
     }
 
+    public function GiftFreeSubscription($user)
+    {
 
+        $subscription = Subscription::create([
+            'name' => 'FREE TRIAL',
+            'user_id' => $user->id,
+            'plan_id' => 3,
+            'number_of_domains' => 1,
+            'is_category' => true,
+            'status' => true
+        ]);
+        $feeds = [10, 7, 4, 2, 14, 21, 25];
+        foreach ($feeds as $feed) {
+            Subscription_category::create([
+                'category_id' => $feed,
+                'subscription_id' => $subscription->id
+            ]);
+        }
+
+        Transaction::create([
+            'subscription_id' => $subscription->id,
+            'amount' => 0,
+            'actual_cost' => 11400,
+            'discount' => 100,
+            'currency_id' => 1,
+            'status' => true
+
+        ]);
+        DB::commit();
+        $user->notify(new ApprovedSubscriptionNotification('FREE TRIAL'));
+    }
 }

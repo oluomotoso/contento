@@ -16,8 +16,11 @@ class ApprovedSubscriptionNotification extends Notification
      *
      * @return void
      */
-    public function __construct()
+    protected $name;
+
+    public function __construct($name)
     {
+        $this->name = $name;
         //
     }
 
@@ -42,7 +45,7 @@ class ApprovedSubscriptionNotification extends Notification
     {
         return (new MailMessage)
             ->greeting('Hello!!!')
-            ->line('Your subscription on Contento have been approved')
+            ->line('Your '.$this->name.' subscription on Contento have been approved')
             ->line('Thank you for using our application!');
     }
 

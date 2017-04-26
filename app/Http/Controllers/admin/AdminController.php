@@ -198,7 +198,7 @@ class AdminController extends Controller
             'status' => true
         ]);
         DB::commit();
-        $user->notify(new ApprovedSubscriptionNotification());
+        $user->notify(new ApprovedSubscriptionNotification($subscription->name));
 
         return redirect($request->path())->with('message', 'Subscription have been approved successfully');
 

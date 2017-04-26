@@ -53,40 +53,41 @@
                         </tr>
                         </thead>
                         <tbody>
-                             @foreach($feeds as $feed)
-                                <tr>
-                                    <td><p class="text-bold">
-                                            <a target="_blank" href="{{url('content/'.$feed->id.'/'.csrf_token())}}">{{ $feed->title}}</a>
+                        @foreach($feeds as $feed)
+                            <tr>
+                                <td><p class="text-bold">
+                                        <a target="_blank"
+                                           href="{{url('content/'.$feed->id.'/'.csrf_token())}}">{{ $feed->title}}</a>
+                                    </p>
+                                    <i
+                                            class="text-success">{{$feed->datasources_feed->Datasource->url}}
+                                    </i>
+                                    <p>@if(count($feed->published)>0)<i
+                                                class="text-primary">{{'published'}}</i>@endif</p>
+                                </td>
+                                <td>@foreach($feed->category as $category)
+                                        <p>{{$category->category->category}}</p>@endforeach</td>
+                                <td><p>{{$feed->updated_at}}</p></td>
+                                <td>
+                                    <form class="form" method="post" action="{{url('user/update-blogger-domain')}}">
+                                        {{csrf_field()}}
+                                        <input name="subscription" value="{{$domain->subscription_id}}" type="hidden">
+                                        <input name="domain" value="{{$domain->id}}" type="hidden">
+                                        <input name="feed" value="{{$feed->id}}" type="hidden">
+                                        <p>
+                                            <button type="submit" id="button" class="btn btn-success" name="publish"
+                                                    value="1">Publish
+                                            </button>
                                         </p>
-                                        <i
-                                                class="text-success">{{$feed->datasources_feed->Datasource->url}}
-                                        </i>
-                                        <p>@if(count($feed->published)>0)<i
-                                                    class="text-primary">{{'published'}}</i>@endif</p>
-                                    </td>
-                                    <td>@foreach($feed->category as $category)
-                                            <p>{{$category->category->category}}</p>@endforeach</td>
-                                    <td><p>{{$feed->updated_at}}</p></td>
-                                    <td>
-                                        <form class="form" method="post" action="{{url('user/update-blogger-domain')}}">
-                                            {{csrf_field()}}
-                                            <input name="subscription" value="{{$domain->subscription_id}}" type="hidden">
-                                            <input name="domain" value="{{$domain->id}}" type="hidden">
-                                            <input name="feed" value="{{$feed->id}}" type="hidden">
-                                            <p>
-                                                <button type="submit" id="button" class="btn btn-success" name="publish"
-                                                        value="1">Publish
-                                                </button>
-                                            </p>
-                                            <p>
-                                                <button type="submit" id="button" class="btn btn-primary" name="publish"
-                                                        value="2">Add to Draft
-                                                </button>
-                                            </p>
-                                        </form>
-                                    </td>
-                                </tr>
-                            @endforeach
+                                        <p>
+                                            <button type="submit" id="button" class="btn btn-primary" name="publish"
+                                                    value="2">Add to Draft
+                                            </button>
+                                        </p>
+                                    </form>
+                                </td>
+                            </tr>
+                        @endforeach
                         </tbody>
                     </table>
                 </div>
