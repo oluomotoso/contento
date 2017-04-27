@@ -40,7 +40,7 @@
                                         <h3 class="panel-title text-center">Manage Wordpress</h3>
 
                                         <p class="text-success text-center">To add a wordpress site, Please download our <a href="https://wordpress.org/plugins/the-contento/">Wordpress Plugin</a> and follow the installation procedures</p>
-                                        
+
 
                                     </div>
                                     <!--div class="panel-heading">
