@@ -43,7 +43,7 @@ class Request
             foreach ($feed_category as $item) {
                 $feedscat[] = $item->feed_id;
             }
-            $feeds = feed::with('datasources_feed.Datasource')->select('id', 'description', 'title', 'link', 'updated_at', 'datasource_feed_id')->whereIn('id', $feedscat)->orderBy('updated_at', 'desc')->limit($limit)->get();
+            $feeds = feed::with('datasources_feed.Datasource')->select('id', 'description', 'title', 'link', 'updated_at', 'datasource_feed_id')->whereIn('id', $feedscat)->orderBy('updated_at', 'asc')->limit($limit)->get();
 
         }
         return $feeds;
