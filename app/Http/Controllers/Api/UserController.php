@@ -71,7 +71,7 @@ class UserController extends Controller
                 $sub = $_POST['subscription'];
                 $url = $_POST['hook'];
                 //$domain = User_domain::where('url', $url)->where('user_id', $user->id)->first();
-                $domain = Subscription_domain::where('subscription_id', $sub)->where('user_domain_id', $url)->first();
+                $domain = Subscription_domain::where('subscription_id', $sub)->where('id', $url)->first();
                 if (count($domain) == 0) {
                     return response('This URL is not valid for the subscription', 406);
                 }
