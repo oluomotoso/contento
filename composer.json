@@ -15,12 +15,13 @@
     "laravel/framework": "5.4.*",
     "laravel/socialite": "^3.0",
     "laravel/tinker": "~1.0",
+    "pda/pheanstalk": "~3.0",
     "ptcong/php-image-uploader": "6.0",
     "rinvex/country": "^2.0",
+    "sofa/eloquence": "^5.4",
     "sylius/pricing": "^0.19.0",
     "webino/zf1-gdata": "^1.0",
-    "yabacon/paystack-php": "^2.1",
-    "pda/pheanstalk": "~3.0"
+    "yabacon/paystack-php": "^2.1"
   },
   "require-dev": {
     "fzaninotto/faker": "~1.4",

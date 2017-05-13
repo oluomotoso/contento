@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\feed;
+use App\Job_feed;
 use App\Published_feed;
 use App\Subscription;
 use App\Subscription_domain;
@@ -85,7 +86,7 @@ class UserController extends Controller
                 }
 
                 $ContentoRequest = new \App\Contento\Request();
-                return $ContentoRequest->SubscriptionFeeds($sub, $subscription, $url,200);
+                return $ContentoRequest->SubscriptionFeeds($sub, $subscription, $url, 200);
             }
             return response('Invalid request', 403);
         }
@@ -113,7 +114,7 @@ class UserController extends Controller
                 }
 
                 $ContentoRequest = new \App\Contento\Request();
-                return $ContentoRequest->SubscriptionFeeds($sub, $subscription, $url,20);
+                return $ContentoRequest->SubscriptionFeeds($sub, $subscription, $url, 20);
             }
             return response('Invalid request', 403);
         }
@@ -146,5 +147,15 @@ class UserController extends Controller
             return response('Unauthorized request', 402);
         }
 
+    }
+
+    public function GetContentoJobs(Request $request)
+    {
+        if ($request->query_parameter == null) {
+            $result = Job_feed::orderBy('updated_at', 'desc')->paginate(10);
+        } else {
+            $result = Job_feed::search($request->query_parameter)->orderBy('updated_at', 'desc')->paginate(10)->get();
+        }
+        return $result;
     }
 }

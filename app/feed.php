@@ -3,10 +3,12 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Sofa\Eloquence\Eloquence;
 
 class feed extends Model
 {
     //
+    use Eloquence;
     protected $fillable = ['title', 'description', 'content', 'grabbed_content', 'link', 'datasource_feed_id', 'published_date'];
 
     public function datasources_feed()
