@@ -24,8 +24,7 @@ Route::group(['domain' => 'api.contento.com.ng'], function () {
             Route::post('/me/notify-publish', 'UserController@InformPublish');
             Route::post('/me/get-sources', 'UserController@GetSubsriptionFeeds');
             Route::post('/me/sources-post', 'UserController@GetFeedsbySource');
-            Route::post('/me/query-jobs', 'UserController@GetContentoJobs');
-
+            Route::get('/me/query-jobs', 'UserController@GetContentoJobs');
 
 
         });

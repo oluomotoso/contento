@@ -149,12 +149,13 @@ class UserController extends Controller
 
     }
 
-    public function GetContentoJobs(Request $request)
+    public function GetContentoJobs()
     {
-        if ($request->query_parameter == null) {
+        $q = $_GET['q'];
+        if ($q == null) {
             $result = Job_feed::orderBy('updated_at', 'desc')->paginate(10);
         } else {
-            $result = Job_feed::search($request->query_parameter)->orderBy('updated_at', 'desc')->paginate(10)->get();
+            $result = Job_feed::search($q)->orderBy('updated_at', 'desc')->paginate(10)->get();
         }
         return $result;
     }
