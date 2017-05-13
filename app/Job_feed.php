@@ -9,6 +9,8 @@ class Job_feed extends Model
 {
     //
     use Eloquence;
+    protected $searchableColumns = ['title', 'content','industry','location','company'];
+
     protected $fillable = ['title', 'description', 'content', 'industry', 'link', 'position', 'company', 'location', 'datasource_feed_id'];
 
     public function datasources_feed()
