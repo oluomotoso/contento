@@ -116,21 +116,25 @@ class contento
                             $company = '';
                             $industry = '';
                             $industrys = $items->getTag('industry');
+                            $industrys = array_unique($industrys);
                             if ($industrys == null) {
                                 $industrys = $category;
                             }
                             foreach ($industrys as $industry) {
-                                $industry .= $industry . ' ';
+                                $industry .= $industry . ',';
                             }
                             $positions = $items->getTag('position');
+                            $positions = array_unique($positions);
                             foreach ($positions as $position) {
-                                $position .= $position . ' ';
+                                $position .= $position . ',';
                             }
                             $locations = $items->getTag('location');
+                            $locations = array_unique($locations);
                             foreach ($locations as $location) {
-                                $location .= $location . ' ';
+                                $location .= $location . ',';
                             }
                             $companys = $items->getTag('company');
+                            $companys = array_unique($companys);
                             foreach ($companys as $company) {
                                 $company .= $company . ' ';
                             }
