@@ -5,6 +5,7 @@ use App\category;
 use App\datasource_feed;
 use App\feed;
 use App\feed_category;
+use App\Job_feed;
 use App\Notifications\ApprovedSubscriptionNotification;
 use App\Notifications\NotifySubscription;
 use App\Plan;
@@ -34,7 +35,7 @@ class contento
 
     }
 
-    public function FindFeedsFromWebsites($website, $datasource_id)
+    public function FindFeedsFromWebsites($website, $datasource_id, $feed_type)
     {
         try {
             $reader = new Reader();
@@ -58,7 +59,7 @@ class contento
                 $feed_title = $feed2->getTitle();
                 $feed_description = $feed2->getDescription();
                 datasource_feed::updateOrCreate(['datasource_id' => $datasource_id,
-                    'url' => $feed], ['name' => $feed_title, 'description' => $feed_description]);
+                    'url' => $feed], ['name' => $feed_title, 'description' => $feed_description, 'feed_type' => $feed_type]);
 
 
             }
@@ -109,24 +110,64 @@ class contento
                         $url = $items->getUrl();
                         $published_date = $items->getPublishedDate()->format('Y-m-d H:i:s');
                         $category = $items->getTag('category');
-                        if (feed::where('link', $url)->count() > 0) {
-                            $item = feed::where('link', $url)->get();
-                            if ($item[0]->published_date < $published_date) {
-                                $this->UpdateFeed($title, $url, $published_date, $category, $contents, $description);
+                        if ($source->feed_type == 2) {
+                            $location = '';
+                            $position = '';
+                            $company = '';
+                            $industry = '';
+                            $industrys = $items->getTag('industry');
+                            if ($industrys == null) {
+                                $industrys = $category;
+                            }
+                            foreach ($industrys as $industry) {
+                                $industry .= $industry . ' ';
+                            }
+                            $positions = $items->getTag('position');
+                            foreach ($positions as $position) {
+                                $position .= $position . ' ';
+                            }
+                            $locations = $items->getTag('location');
+                            foreach ($locations as $location) {
+                                $location .= $location . ' ';
+                            }
+                            $companys = $items->getTag('company');
+                            foreach ($companys as $company) {
+                                $company .= $company . ' ';
+                            }
+                            if (feed::where('link', $url)->count() > 0) {
+                                $item = feed::where('link', $url)->get();
+
+                                if ($item[0]->published_date < $published_date) {
+
+                                    $this->UpdateJobFeed($title, $url, $published_date, $contents, $description, $industry, $position, $company, $location);
+                                }
+                            } else {
+                                $this->CreateJobFeed($title, $url, $published_date, $source->id, $contents, $description, $industry, $position, $company, $location);
+                            }
+
+                        } else {
+                            if (feed::where('link', $url)->count() > 0) {
+                                $item = feed::where('link', $url)->get();
+
+                                if ($item[0]->published_date < $published_date) {
+                                    $this->UpdateFeed($title, $url, $published_date, $category, $contents, $description);
+                                }
+                            } else {
+                                $this->CreateFeed($title, $url, $published_date, $source->id, $category, $contents, $description);
 
                             }
-                        } else {
-                            $this->CreateFeed($title, $url, $published_date, $source->id, $category, $contents, $description);
+
                         }
+                        datasource_feed::where('id', $source->id)->update([
+                            'last_modified' => $last_modified,
+                            'etag' => $etag
+                        ]);
                     }
-                    datasource_feed::where('id', $source->id)->update([
-                        'last_modified' => $last_modified,
-                        'etag' => $etag
-                    ]);
                 }
             } catch (\Exception $e) {
 
                 echo $e->getMessage();
+                continue;
             }
         }
         return 'Feeds have been aggregated successfully';
@@ -228,6 +269,40 @@ class contento
             }
         }
 
+
+    }
+
+    public
+    function CreateJobFeed($title, $link, $publish, $datasource, $content, $description, $industry, $position, $company, $location)
+    {
+
+        Job_feed::create([
+            'title' => $title,
+            'link' => $link,
+            'published_date' => $publish,
+            'datasource_feed_id' => $datasource,
+            'content' => $content,
+            'description' => $description,
+            'industry' => $industry,
+            'location' => $location,
+            'company' => $company,
+            'position' => $position
+        ]);
+    }
+
+    public
+    function UpdateJobFeed($title, $link, $publish, $content, $description, $industry, $position, $company, $location)
+    {
+        Job_feed::where('link', $link)->update([
+            'title' => $title,
+            'published_date' => $publish,
+            'content' => $content,
+            'description' => $description,
+            'industry' => $industry,
+            'location' => $location,
+            'company' => $company,
+            'position' => $position
+        ]);
 
     }
 

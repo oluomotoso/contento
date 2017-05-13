@@ -45,13 +45,13 @@ class AdminController extends Controller
                 $setting = datasource::where('url', $request->url)->count();
                 if ($setting > 0) {
                     $source = datasource::where('url', $request->url)->get();
-                    $this->dispatch(new FindFeeds($request->url, $source[0]->id));
+                    $this->dispatch(new FindFeeds($request->url, $source[0]->id,$request->feed_type));
                 } else {
                     $source = datasource::create([
                         'url' => $request->url,
                         'user_id' => $user->id
                     ]);
-                    $this->dispatch(new FindFeeds($request->url, $source->id));
+                    $this->dispatch(new FindFeeds($request->url, $source->id,$request->feed_type));
 
                 }
                 return redirect($request->path())->with('message', 'datasource saved successfully');
@@ -134,7 +134,8 @@ class AdminController extends Controller
                 'name' => $feed_title,
                 'description' => $feed_description,
                 'datasource_id' => $request->datasource_id,
-                'url' => $request->url
+                'url' => $request->url,
+                'feed_type'=>$request->feed_type
             ]);
             return redirect($request->path())->with('message', 'feeds saved successfully');
 

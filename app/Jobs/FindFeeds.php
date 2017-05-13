@@ -14,17 +14,19 @@ class FindFeeds implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
     protected $website;
     protected $source;
+    protected $feed_type;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($website, $source)
+    public function __construct($website, $source, $feed_type)
     {
         //
         $this->website = $website;
         $this->source = $source;
+        $this->feed_type = $feed_type;
     }
 
     /**
@@ -37,6 +39,7 @@ class FindFeeds implements ShouldQueue
         //
         $website = $this->website;
         $source = $this->source;
-        $aggregate->FindFeedsFromWebsites($website, $source);
+        $feed_type = $this->feed_type;
+        $aggregate->FindFeedsFromWebsites($website, $source,$feed_type);
     }
 }

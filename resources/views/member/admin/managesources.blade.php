@@ -52,6 +52,17 @@
                                                value="{{old('url')}}"
                                                required/>
                                     </div>
+                                    <br>&nbsp;<br/>
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label">Feed Type<span
+                                                    class="required">*</span></label>
+                                        <div class="col-sm-9">
+                                            <select name="feed_type" class="form-control">
+                                                <option class="form-control" value="1">Normal</option>
+                                                <option class="form-control" value="2">Job</option>
+                                            </select>
+                                        </div>
+                                    </div>
                                 </div>
 
                             </div>
@@ -69,41 +80,41 @@
                 <!-- col-md-6 Add website or platform profiles on other platforms-->
 
                 <div class="col-md-6">
-                        <form id="form" action="{{url('/admin/manage-sources')}}" class="form-horizontal" method="post">
-                            {!! csrf_field() !!}
-                            <section class="panel">
-                                <header class="panel-heading">
-                                    <div class="panel-actions">
-                                        <a href="#" class="fa fa-caret-down"></a>
-                                        <a href="#" class="fa fa-times"></a>
-                                    </div>
-
-                                    <h2 class="panel-title">Manage Sources</h2>
-                                </header>
-                                <div class="panel-body">
-                                    <div class="form-group">
-                                        <label class="col-sm-3 control-label">All Sources <span
-                                                    class="required">*</span></label>
-
-                                        <div class="col-sm-9">
-                                            <select name="datasource_id" class="form-control" required>
-                                                @foreach($sources as $source)
-                                                    <option value="{{$source->id}}">{{$source->url}}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    </div>
-
+                    <form id="form" action="{{url('/admin/manage-sources')}}" class="form-horizontal" method="post">
+                        {!! csrf_field() !!}
+                        <section class="panel">
+                            <header class="panel-heading">
+                                <div class="panel-actions">
+                                    <a href="#" class="fa fa-caret-down"></a>
+                                    <a href="#" class="fa fa-times"></a>
                                 </div>
-                                <footer class="panel-footer">
-                                    <div class="row">
-                                        <div class="col-sm-9 col-sm-offset-3">
-                                            <button class="btn btn-primary" name="manage_feeds">Manage Feeds</button>
-                                        </div>
+
+                                <h2 class="panel-title">Manage Sources</h2>
+                            </header>
+                            <div class="panel-body">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">All Sources <span
+                                                class="required">*</span></label>
+
+                                    <div class="col-sm-9">
+                                        <select name="datasource_id" class="form-control" required>
+                                            @foreach($sources as $source)
+                                                <option value="{{$source->id}}">{{$source->url}}</option>
+                                            @endforeach
+                                        </select>
                                     </div>
-                                </footer>
-                            </section>
-                        </form>
+                                </div>
+
+                            </div>
+                            <footer class="panel-footer">
+                                <div class="row">
+                                    <div class="col-sm-9 col-sm-offset-3">
+                                        <button class="btn btn-primary" name="manage_feeds">Manage Feeds</button>
+                                    </div>
+                                </div>
+                            </footer>
+                        </section>
+                    </form>
                 </div>
                 <div class="col-md-6">
                     <form id="form" action="{{url('/admin/manage-feeds')}}" class="form-horizontal" method="post">
@@ -141,6 +152,16 @@
                                                required/>
                                     </div>
                                 </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">Feed Type<span
+                                                class="required">*</span></label>
+                                    <div class="col-sm-9">
+                                        <select name="feed_type" class="form-control">
+                                            <option class="form-control" value="1">Normal</option>
+                                            <option class="form-control" value="2">Job</option>
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
                             <footer class="panel-footer">
                                 <div class="row">
@@ -152,7 +173,7 @@
                         </section>
                     </form>
                 </div>
-                    <div class="col-md-6">
+                <div class="col-md-6">
                     <form id="form" action="{{url('/admin/update-cost')}}" class="form-horizontal" method="post">
                         {!! csrf_field() !!}
                         <section class="panel">
@@ -200,7 +221,7 @@
                         </section>
                     </form>
                 </div>
-                    <div class="col-md-6">
+                <div class="col-md-6">
                     <form id="form" action="{{url('/admin/update-cost')}}" class="form-horizontal" method="post">
                         {!! csrf_field() !!}
                         <section class="panel">
