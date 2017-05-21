@@ -111,48 +111,28 @@ class contento
                         $published_date = $items->getPublishedDate()->format('Y-m-d H:i:s');
                         $category = $items->getTag('category');
                         if ($source->feed_type == 2) {
-                            $location = '';
-                            $position = '';
-                            $company = '';
-                            $industry = '';
                             $industrys = $items->getTag('industry');
-                            $industrys = array_unique($industrys);
-                            if ($industrys == null) {
+                             if ($industrys == null) {
                                 $industrys = $category;
                             }
-                            foreach ($industrys as $industry) {
-                                $industry .= $industry . ',';
-                            }
+
                             $positions = $items->getTag('position');
-                            $positions = array_unique($positions);
-                            foreach ($positions as $position) {
-                                $position .= $position . ',';
-                            }
                             $locations = $items->getTag('location');
-                            $locations = array_unique($locations);
-                            foreach ($locations as $location) {
-                                $location .= $location . ',';
-                            }
                             $companys = $items->getTag('company');
-                            $companys = array_unique($companys);
-                            foreach ($companys as $company) {
-                                $company .= $company . ' ';
-                            }
                             if (feed::where('link', $url)->count() > 0) {
                                 $item = feed::where('link', $url)->get();
 
                                 if ($item[0]->published_date < $published_date) {
 
-                                    $this->UpdateJobFeed($title, $url, $published_date, $contents, $description, $industry, $position, $company, $location);
+                                    $this->UpdateJobFeed($title, $url, $published_date, $contents, $description, $industrys, $positions, $companys, $locations);
                                 }
                             } else {
-                                $this->CreateJobFeed($title, $url, $published_date, $source->id, $contents, $description, $industry, $position, $company, $location);
+                                $this->CreateJobFeed($title, $url, $published_date, $source->id, $contents, $description, $industrys, $positions, $companys, $locations);
                             }
 
                         } else {
                             if (feed::where('link', $url)->count() > 0) {
                                 $item = feed::where('link', $url)->get();
-
                                 if ($item[0]->published_date < $published_date) {
                                     $this->UpdateFeed($title, $url, $published_date, $category, $contents, $description);
                                 }
@@ -287,10 +267,10 @@ class contento
             'datasource_feed_id' => $datasource,
             'content' => $content,
             'description' => $description,
-            'industry' => $industry,
-            'location' => $location,
-            'company' => $company,
-            'position' => $position
+            'industry' => json_encode($industry),
+            'location' => json_encode($location),
+            'company' => json_encode($company),
+            'position' => json_encode($position)
         ]);
     }
 
@@ -302,10 +282,10 @@ class contento
             'published_date' => $publish,
             'content' => $content,
             'description' => $description,
-            'industry' => $industry,
-            'location' => $location,
-            'company' => $company,
-            'position' => $position
+            'industry' => json_encode($industry),
+            'location' => json_encode($location),
+            'company' => json_encode($company),
+            'position' => json_encode($position)
         ]);
 
     }

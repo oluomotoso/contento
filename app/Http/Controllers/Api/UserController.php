@@ -152,9 +152,9 @@ class UserController extends Controller
     public function GetContentoJobs($q)
     {
         if ($q == 'q') {
-            $result = Job_feed::orderBy('updated_at', 'desc')->paginate(10);
+            $result = Job_feed::with('datasources_feed.Datasource')->orderBy('updated_at', 'desc')->paginate(10);
         } else {
-            $result = Job_feed::search($q)->orderBy('updated_at', 'desc')->paginate(10);
+            $result = Job_feed::with('datasources_feed.Datasource')->search($q)->orderBy('updated_at', 'desc')->paginate(10);
         }
         return $result;
     }
