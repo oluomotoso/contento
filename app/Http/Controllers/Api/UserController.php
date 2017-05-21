@@ -158,4 +158,15 @@ class UserController extends Controller
         }
         return $result;
     }
+
+    public function GetLatestUpdatedJobs(Request $request)
+    {
+        $time = $request->created_at;
+        if ($time == null) {
+            $jobs = Job_feed::limit(200)->get();
+        } else {
+            $jobs = Job_feed::where('updated_at', '>=', $time)->limit(200)->get();
+        }
+        return $jobs;
+    }
 }
