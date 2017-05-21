@@ -167,6 +167,6 @@ class UserController extends Controller
         } else {
             $jobs = Job_feed::with('datasources_feed.Datasource')->where('updated_at', '>=', $time)->limit(200)->get();
         }
-        return $jobs;
+        return $time;
     }
 }
