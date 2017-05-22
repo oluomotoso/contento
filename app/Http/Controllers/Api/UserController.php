@@ -161,8 +161,9 @@ class UserController extends Controller
 
     public function GetLatestUpdatedJobs(Request $request)
     {
+
         $time = $_POST['updated_at'];
-        if ($time == null) {
+        if ($time == 0) {
             $jobs = Job_feed::with('datasources_feed.Datasource')->limit(200)->get();
         } else {
             $jobs = Job_feed::with('datasources_feed.Datasource')->where('updated_at', '>=', $time)->limit(200)->get();
