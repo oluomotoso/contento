@@ -159,15 +159,19 @@ class UserController extends Controller
         return $result;
     }
 
-    public function GetLatestUpdatedJobs(Request $request)
+    public function GetLatestUpdatedJobs()
     {
-
-        $time = $_POST['updated_at'];
-        if ($time == 0) {
-            $jobs = Job_feed::with('datasources_feed.Datasource')->limit(200)->get();
-        } else {
-            $jobs = Job_feed::with('datasources_feed.Datasource')->where('updated_at', '>=', $time)->limit(200)->get();
+        try {
+            $time = $_POST['updated_at'];
+            if ($time == 0) {
+                $jobs = Job_feed::with('datasources_feed.Datasource')->limit(200)->get();
+            } else {
+                $jobs = Job_feed::with('datasources_feed.Datasource')->where('updated_at', '>=', $time)->limit(200)->get();
+            }
+            return $jobs;
+        } catch (\Exception $exception) {
+            return response($exception->getMessage(), $exception->getCode());
         }
-        return $jobs;
+
     }
 }
