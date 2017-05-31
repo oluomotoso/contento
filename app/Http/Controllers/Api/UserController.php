@@ -181,7 +181,7 @@ class UserController extends Controller
         $today = new \DateTime();
         $sources = category::withCount(['feed_category' => function ($query) use ($today) {
             $query->where('updated_at', '>', $today->modify('-7 days'));
-        }])->orderBy('feed_category_count', 'desc')->limit(20)->get();
+        }])->orderBy('feed_category_count', 'desc')->limit(100)->get();
 
         return $sources;
 
