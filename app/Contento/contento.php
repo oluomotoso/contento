@@ -112,41 +112,29 @@ class contento
                         $category = $items->getTag('category');
                         if ($source->feed_type == 2) {
                             $industrys = $items->getTag('industry');
-                             if ($industrys == null) {
+                            if ($industrys == null) {
                                 $industrys = $category;
                             }
 
                             $positions = $items->getTag('position');
                             $locations = $items->getTag('location');
                             $companys = $items->getTag('company');
-                            if (feed::where('link', $url)->count() > 0) {
-                                $item = feed::where('link', $url)->get();
 
-                                if ($item[0]->published_date < $published_date) {
+                            $this->CreateJobFeed($title, $url, $published_date, $source->id, $contents, $description, $industrys, $positions, $companys, $locations);
 
-                                    $this->UpdateJobFeed($title, $url, $published_date, $contents, $description, $industrys, $positions, $companys, $locations);
-                                }
-                            } else {
-                                $this->CreateJobFeed($title, $url, $published_date, $source->id, $contents, $description, $industrys, $positions, $companys, $locations);
-                            }
 
                         } else {
-                            if (feed::where('link', $url)->count() > 0) {
-                                $item = feed::where('link', $url)->get();
-                                if ($item[0]->published_date < $published_date) {
-                                    $this->UpdateFeed($title, $url, $published_date, $category, $contents, $description);
-                                }
-                            } else {
-                                $this->CreateFeed($title, $url, $published_date, $source->id, $category, $contents, $description);
 
-                            }
+                            $this->CreateFeed($title, $url, $published_date, $source->id, $category, $contents, $description);
+
 
                         }
-                        datasource_feed::where('id', $source->id)->update([
-                            'last_modified' => $last_modified,
-                            'etag' => $etag
-                        ]);
+
                     }
+                    datasource_feed::where('id', $source->id)->update([
+                        'last_modified' => $last_modified,
+                        'etag' => $etag
+                    ]);
                 }
             } catch (\Exception $e) {
 
@@ -227,10 +215,9 @@ class contento
     function CreateFeed($title, $link, $publish, $datasource, $categories, $content, $description)
     {
 
-        $feed = feed::create([
+        $feed = feed::updateOrCreate(['link' => $link,'datasource_feed_id' => $datasource],[
             'title' => $title,
-            'link' => $link, 'published_date' => $publish,
-            'datasource_feed_id' => $datasource,
+             'published_date' => $publish,
             'content' => $content,
             'description' => $description
         ]);
@@ -260,11 +247,9 @@ class contento
     function CreateJobFeed($title, $link, $publish, $datasource, $content, $description, $industry, $position, $company, $location)
     {
 
-        Job_feed::create([
+        Job_feed::updateOrCreate(['link' => $link,'datasource_feed_id' => $datasource],[
             'title' => $title,
-            'link' => $link,
             'published_date' => $publish,
-            'datasource_feed_id' => $datasource,
             'content' => $content,
             'description' => $description,
             'industry' => json_encode($industry),
