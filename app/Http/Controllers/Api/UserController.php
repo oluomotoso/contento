@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\category;
 use App\feed;
 use App\Job_feed;
 use App\Published_feed;
@@ -172,6 +173,17 @@ class UserController extends Controller
         } catch (\Exception $exception) {
             return response($exception->getMessage(), $exception->getCode());
         }
+
+    }
+
+    public function GetMajorCategories()
+    {
+        $today = new \DateTime();
+        $sources = category::withCount(['feed_category' => function ($query) use ($today) {
+            $query->where('updated_at', '>', $today->modify('-7 days'));
+        }])->orderBy('feed_category_count', 'desc')->limit(20)->get();
+
+        return $sources;
 
     }
 }

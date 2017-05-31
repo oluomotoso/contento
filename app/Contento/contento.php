@@ -215,9 +215,9 @@ class contento
     function CreateFeed($title, $link, $publish, $datasource, $categories, $content, $description)
     {
 
-        $feed = feed::updateOrCreate(['link' => $link,'datasource_feed_id' => $datasource],[
+        $feed = feed::updateOrCreate(['link' => $link, 'datasource_feed_id' => $datasource], [
             'title' => $title,
-             'published_date' => $publish,
+            'published_date' => $publish,
             'content' => $content,
             'description' => $description
         ]);
@@ -239,7 +239,15 @@ class contento
                     'category_id' => $cat->id]);
             }
         }
-
+        $datasource = datasource_feed::find($datasource);
+        $url = $datasource->datasource->url;
+        $source = category::firstOrCreate([
+            'category' => $url
+        ]);
+       category::find($source->id)->touch();
+        feed_category::firstOrCreate([
+            'feed_id' => $feed->id,
+            'category_id' => $source->id]);
 
     }
 
@@ -247,7 +255,7 @@ class contento
     function CreateJobFeed($title, $link, $publish, $datasource, $content, $description, $industry, $position, $company, $location)
     {
 
-        Job_feed::updateOrCreate(['link' => $link,'datasource_feed_id' => $datasource],[
+        Job_feed::updateOrCreate(['link' => $link, 'datasource_feed_id' => $datasource], [
             'title' => $title,
             'published_date' => $publish,
             'content' => $content,

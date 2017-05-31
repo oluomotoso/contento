@@ -21,6 +21,7 @@ Route::group(['domain' => 'api.contento.com.ng'], function () {
             Route::post('/me/update-subscription-url', 'UserController@UserUpdateSubscription');
             Route::post('/me/subscription-posts', 'UserController@UserSubscriptionFeeds');
             Route::get('/me/content/{id}', 'UserController@GetContent');
+            Route::get('/me/select-categories', 'UserController@GetMajorCategories');
             Route::post('/me/notify-publish', 'UserController@InformPublish');
             Route::post('/me/get-sources', 'UserController@GetSubsriptionFeeds');
             Route::post('/me/sources-post', 'UserController@GetFeedsbySource');
