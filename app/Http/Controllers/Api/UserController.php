@@ -43,7 +43,7 @@ class UserController extends Controller
         if (isset($_POST['subscription'])) {
             $subscription = $_POST['subscription'];
             $url = $_POST['url'];
-            $domain = User_domain::updateOrCreate(['url' => $url, 'user_id' => $user->id, 'platform_id' => 2]);
+            $domain = User_domain::firstOrCreate(['url' => $url, 'user_id' => $user->id, 'platform_id' => 2]);
             $sub_id = Subscription_domain::updateOrCreate(['subscription_id' => $subscription, 'user_domain_id' => $domain->id], ['platform_id' => 2]);
             return $sub_id->id;
         }
@@ -73,7 +73,7 @@ class UserController extends Controller
                 $sub = $_POST['subscription'];
                 $url = $_POST['hook'];
                 //$domain = User_domain::where('url', $url)->where('user_id', $user->id)->first();
-                $domain = Subscription_domain::where('subscription_id', $sub)->where('id', $url)->first();
+                $domain = Subscription_domain::where('subscription_id', $sub)->where('user_domain_id', $url)->first();
                 if (count($domain) == 0) {
                     return response('This URL is not valid for the subscription', 406);
                 }
