@@ -43,7 +43,7 @@ class UserController extends Controller
         if (isset($_POST['subscription'])) {
             $subscription = $_POST['subscription'];
             $url = $_POST['url'];
-            $domain = User_domain::firstOrCreate(['url' => $url, 'user_id' => $user->id, 'platform_id' => 2]);
+            $domain = User_domain::updateOrCreate(['url' => $url, 'user_id' => $user->id, 'platform_id' => 2]);
             $sub_id = Subscription_domain::updateOrCreate(['subscription_id' => $subscription, 'user_domain_id' => $domain->id], ['platform_id' => 2]);
             return $sub_id->id;
         }
