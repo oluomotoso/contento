@@ -34,15 +34,20 @@ class UserController extends Controller
     public function UserUpdateSubscription(Request $request)
     {
         //$url = $request->;
+        $url = $_POST['url'];
         $subscription = Subscription::find($request->subscription);
-        if (count($subscription->domain) >= $subscription->number_of_domains) {
+        $i = 0;
+        if ($subscription->domain->user_domain->url == $url) {
+            $i = 1;
+        }
+        if ((count($subscription->domain)-$i) >= $subscription->number_of_domains) {
             return response('Maximum allowed domains reached', 405);
         }
         //$referrer = $_SERVER['HTTP_REFERER'];
         $user = $request->user();
         if (isset($_POST['subscription'])) {
             $subscription = $_POST['subscription'];
-            $url = $_POST['url'];
+
             $domain = User_domain::updateOrCreate(['url' => $url, 'user_id' => $user->id, 'platform_id' => 2]);
             $sub_id = Subscription_domain::updateOrCreate(['subscription_id' => $subscription, 'user_domain_id' => $domain->id], ['platform_id' => 2]);
             return $sub_id->id;
