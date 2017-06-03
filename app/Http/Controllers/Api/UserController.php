@@ -35,16 +35,17 @@ class UserController extends Controller
     {
         //$url = $request->;
         $url = $_POST['url'];
+        $user = $request->user();
         $subscription = Subscription::find($request->subscription);
+        $user_domain = User_domain::where('url', $url)->where('user_id', $user->id)->get();
         $i = 0;
-        if ($subscription->domain->user_domain->url == $url) {
+        if (count($user_domain) > 0) {
             $i = 1;
         }
-        if ((count($subscription->domain)-$i) >= $subscription->number_of_domains) {
+        if ((count($subscription->domain) - $i) >= $subscription->number_of_domains) {
             return response('Maximum allowed domains reached', 405);
         }
         //$referrer = $_SERVER['HTTP_REFERER'];
-        $user = $request->user();
         if (isset($_POST['subscription'])) {
             $subscription = $_POST['subscription'];
 
