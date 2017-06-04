@@ -93,7 +93,9 @@ class UserController extends Controller
                 }
 
                 $ContentoRequest = new \App\Contento\Request();
-                return $ContentoRequest->SubscriptionFeeds($sub, $subscription, $url, 200);
+
+                $feeds = $ContentoRequest->SubscriptionFeeds($sub, $subscription, $url, 200);
+                return $feeds;
             }
             return response('Invalid request', 403);
         }
