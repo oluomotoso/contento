@@ -4,6 +4,8 @@ namespace App\Console;
 
 use App\Console\Commands\AutopublishContents;
 use App\Console\Commands\FetchFeeds;
+use App\Console\Commands\RemoveOldIndex;
+use App\Console\Commands\RemoveOldJobIndex;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -16,7 +18,9 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         FetchFeeds::class,
-        AutopublishContents::class
+        AutopublishContents::class,
+        RemoveOldIndex::class,
+        RemoveOldJobIndex::class
     ];
 
     /**
@@ -27,8 +31,9 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('fetch:feeds')->everyMinute();
-        $schedule->command('autopublish:contents')->everyMinute();
+        $schedule->command('fetch:feeds')->everyFiveMinutes()->withoutOverlapping();
+        $schedule->command('autopublish:contents')->everyFiveMinutes()->withoutOverlapping();
+        $schedule->command('remove:oldindex')->everyThirtyMinutes()->withoutOverlapping();
     }
 
     /**

@@ -13,6 +13,7 @@ use App\Publishing_parameter;
 use App\Subscription;
 use App\Subscription_category;
 use App\Transaction;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -184,6 +185,16 @@ class contento
         }
     }
 
+    public function DeleteOldIndices()
+    {
+        feed::where('created_at', '<=', Carbon::now()->subWeek(2))->delete();
+    }
+
+    public function DeleteOldJobIndices()
+    {
+        Job_feed::where('created_at', '<=', Carbon::now()->subWeek(2))->delete();
+    }
+
     function rip_tags($string)
     {
 
@@ -244,7 +255,7 @@ class contento
         $source = category::firstOrCreate([
             'category' => $url
         ]);
-       category::find($source->id)->touch();
+        category::find($source->id)->touch();
         feed_category::firstOrCreate([
             'feed_id' => $feed->id,
             'category_id' => $source->id]);
