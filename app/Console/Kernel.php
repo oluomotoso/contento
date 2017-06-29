@@ -34,6 +34,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('fetch:feeds')->everyFiveMinutes()->withoutOverlapping();
         $schedule->command('autopublish:contents')->everyFiveMinutes()->withoutOverlapping();
         $schedule->command('remove:oldindex')->everyThirtyMinutes()->withoutOverlapping();
+        $schedule->command('remove:oldjobindex')->everyThirtyMinutes()->withoutOverlapping();
     }
 
     /**
